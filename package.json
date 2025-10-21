@@ -1,0 +1,23 @@
+{
+  "name": "adopt-a-sky",
+  "description": "Web app where users can 'adopt' patches of the southern sky. Uses data from the Vera C. Rubin Observatory.",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server/main.js",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "https": "^1.0.0",
+    "selfsigned": "^3.0.1",
+    "vite": "^7.1.7"
+  },
+  "engine": {
+    "node": ">= 24"
+  }
+}
