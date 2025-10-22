@@ -20,24 +20,6 @@ function checkOrigin (req, res, next) {
   next()
 }
 
-async function testRoot (clientRequest, serverResponse) {
-  try {
-    serverResponse
-    .status(200)
-    .json({
-      status: 'OK'
-    })
-
-  } catch (err) {
-    const errMessage = err?.toString() || '???'
-    serverResponse
-    .status(500)
-    .json({
-      error: errMessage
-    })
-  }
-}
-
 async function testFetch (clientRequest, serverResponse) {
   try {
     const ra = 194.494
@@ -53,7 +35,7 @@ async function testFetch (clientRequest, serverResponse) {
       const obj = data[i]
       let classifications = {}
       
-      const SANITY_LIMIT_TO_PREVENT_API_CALL_OVERLOAD = 5
+      const SANITY_LIMIT_TO_PREVENT_API_CALL_OVERLOAD = 1
       if (i <= SANITY_LIMIT_TO_PREVENT_API_CALL_OVERLOAD) {
         try {
           const sherlockResponse = await fetch(`${config.lasairApiUrl}sherlock/object/?objectId=${obj.object}&lite=true&token=${config.lasairApiKey}&format=json`)
@@ -92,9 +74,14 @@ async function testFetch (clientRequest, serverResponse) {
   }
 }
 
+// Apply origin checks
 server.use(checkOrigin)
-server.get('/', testRoot)
+
+// Special API path
 server.get('/fetch', testFetch)
+
+// All other paths: serve static files
+server.use(express.static('dist'))
 
 if (process.env.NODE_ENV === 'production') {
   server.listen(config.port, (err) => {
