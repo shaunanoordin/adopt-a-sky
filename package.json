@@ -7,8 +7,7 @@
   "scripts": {
     "start": "node server/main.js",
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build"
   },
   "devDependencies": {
     "dotenv": "^17.2.3",
