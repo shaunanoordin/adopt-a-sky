@@ -22,3 +22,16 @@ document.querySelector('#app').innerHTML = `
 `
 
 setupCounter(document.querySelector('#counter'))
+
+class WebApp {
+  constructor () {
+
+  }
+
+  onSignIn () {
+    console.log('+++ onSignIn')
+  }
+}
+
+
+window.webapp = new WebApp()

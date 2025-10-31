@@ -58,6 +58,8 @@
       console.log('  Unique ID: ' + responsePayload.sub)
       console.log('  Profile image URL: ' + responsePayload.picture)
       console.log('  Email: ' + responsePayload.email)
+
+      window?.webapp?.onSignIn()
     }
 
   </script>
