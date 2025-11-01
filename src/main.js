@@ -2,6 +2,7 @@ import './style.css'
 import javascriptLogo from './javascript.svg'
 import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.js'
+import decodeJWT from './util/decodeJWT.js'
 
 document.querySelector('#app').innerHTML = `
   <div>
@@ -25,13 +26,32 @@ setupCounter(document.querySelector('#counter'))
 
 class WebApp {
   constructor () {
-
+    console.log('+++ WebApp.constructor()')
   }
 
-  onSignIn () {
-    console.log('+++ onSignIn')
+  start () {
+    console.log('+++ WebApp.start()')
+    this.checkAuth()
+  }
+
+  checkAuth () {
+    // TODO
+  }
+
+  onSignIn (token) {
+    const userInfo = decodeJWT(token)
+    console.log('+++ userInfo: ', userInfo)
+
+    // TODO
+  }
+
+  doSignOut () {
+    // TODO
   }
 }
 
-
 window.webapp = new WebApp()
+
+window.onload = function init () {
+  window.webapp.start()
+}
