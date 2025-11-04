@@ -34,13 +34,28 @@ class WebApp {
     this.checkAuth()
   }
 
-  checkAuth () {
-    // TODO
+  // Check if user is currently authenticated, by confirming with the server.
+  async checkAuth () {
+
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        foo: 'bar'
+      }),
+    })
+
+    const resBody = await res.json()
+    console.log('+++ resBody: ', resBody)
   }
 
   onSignIn (token) {
     const userInfo = decodeJWT(token)
     console.log('+++ userInfo: ', userInfo)
+    
+    this.checkAuth()
 
     // TODO
   }
