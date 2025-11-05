@@ -36,10 +36,12 @@ class WebApp {
 
   // Check if user is currently authenticated, by confirming with the server.
   async checkAuth () {
+    const userToken = localStorage?.getItem('userToken')  || ''
 
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: {
+        'Authorization': userToken ? `Bearer ${userToken}` : undefined,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -54,6 +56,8 @@ class WebApp {
   onSignIn (token) {
     const userInfo = decodeJWT(token)
     console.log('+++ userInfo: ', userInfo)
+
+    localStorage?.setItem('userToken', token)
     
     this.checkAuth()
 
