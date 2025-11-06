@@ -12,25 +12,36 @@
   </head>
   <body>
     <header>
-      <div id="g_id_onload"
+
+      <div
+        id="g_id_onload"
         data-client_id="%VITE_GOOGLE_CLIENT_ID%"
         data-context="signin"
         data-ux_mode="popup"
         data-callback="handleSignIn"
-        data-auto_prompt="false">
-      </div>
+        data-auto_prompt="false"
+      ></div>
 
-      <div class="g_id_signin"
+      <div
+        class="g_id_signin"
         data-type="standard"
         data-shape="pill"
         data-theme="outline"
         data-text="signin_with"
         data-size="large"
-        data-logo_alignment="left">
-      </div>
+        data-logo_alignment="left"
+      ></div>
+
+      <div
+        id="user-details"
+      ></div>
+
+      <button
+        id="signout-button"
+      >Sign Out</button>
 
     </header>
-    <div id="app"></div>
+    <main div id="app"></main>
     <script type="module" src="/src/main.js"></script>
   </body>
   <script>
