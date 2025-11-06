@@ -3,6 +3,7 @@ import https from 'https'
 import selfsigned from 'selfsigned'
 
 import { config } from './config.js'
+import api_auth from './api/auth.js'
 import api_test from './api/test.js'
 
 const server = express()
@@ -10,13 +11,20 @@ const server = express()
 function checkOrigin (req, res, next) {
   const origin = req.get('origin') || ''
   console.log('Request from: ', origin)
+  // TODO
   next()
 }
 
 // Apply origin checks
 server.use(checkOrigin)
 
-// Special API path
+// Allow server to read JSON payloads
+server.use(express.json())
+server.use(express.urlencoded({ extended: true }))
+
+// API paths
+server.get('/api/auth', api_auth)
+server.post('/api/auth', api_auth)
 server.get('/api/test', api_test)
 
 // All other paths: serve static files

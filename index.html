@@ -4,10 +4,53 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>adopt-a-sky</title>
+    <title>Adopt-A-Sky</title>
+
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <!-- /Google Sign-In -->
   </head>
   <body>
-    <div id="app"></div>
+    <header>
+      <h1>Adopt-A-Sky</h1>
+
+      <div class="spacer"></div>
+
+      <div
+        id="g_id_onload"
+        data-client_id="%VITE_GOOGLE_CLIENT_ID%"
+        data-context="signin"
+        data-ux_mode="popup"
+        data-callback="handleSignIn"
+        data-auto_prompt="false"
+      ></div>
+
+      <div
+        class="g_id_signin"
+        data-type="standard"
+        data-shape="pill"
+        data-theme="outline"
+        data-text="signin_with"
+        data-size="large"
+        data-logo_alignment="left"
+      ></div>
+
+      <div
+        id="user-details"
+      ></div>
+
+      <button
+        id="signout-button"
+      >Sign Out</button>
+
+    </header>
+    <main div id="app"></main>
     <script type="module" src="/src/main.js"></script>
   </body>
+  <script>
+    function handleSignIn (response) {
+      const token = response.credential
+      window?.webapp?.onSignIn(token)
+    }
+  </script>
 </html>

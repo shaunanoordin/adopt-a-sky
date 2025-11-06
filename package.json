@@ -8,7 +8,7 @@
     "start": "node server/main.js",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "server": "node server/main.js"
   },
   "devDependencies": {
     "dotenv": "^17.2.3",
@@ -19,5 +19,8 @@
   },
   "engine": {
     "node": ">= 24"
+  },
+  "dependencies": {
+    "google-auth-library": "^10.5.0"
   }
 }
