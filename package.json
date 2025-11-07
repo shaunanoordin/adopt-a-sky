@@ -10,16 +10,16 @@
     "build": "vite build"
   },
   "devDependencies": {
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "https": "^1.0.0",
-    "selfsigned": "^3.0.1",
     "vite": "^7.1.7"
   },
   "engine": {
     "node": ">= 24"
   },
   "dependencies": {
-    "google-auth-library": "^10.5.0"
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "google-auth-library": "^10.5.0",
+    "https": "^1.0.0",
+    "selfsigned": "^4.0.0"
   }
 }
