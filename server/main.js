@@ -6,6 +6,7 @@ import { config } from './config.js'
 import api_auth from './api/auth.js'
 import api_test from './api/test.js'
 import api_dbtest from './api/dbtest.js'
+import api_dbtest2 from './api/dbtest2.js'
 
 const server = express()
 
@@ -28,6 +29,7 @@ server.get('/api/auth', api_auth)
 server.post('/api/auth', api_auth)
 server.get('/api/test', api_test)
 server.get('/api/dbtest', api_dbtest)
+server.get('/api/dbtest2', api_dbtest2)
 
 // All other paths: serve static files
 server.use(express.static('dist'))
