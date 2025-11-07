@@ -6,9 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node server/main.js",
-    "dev": "vite",
-    "build": "vite build",
-    "server": "node server/main.js"
+    "dev": "echo \"Dev Mode:\n- Sorry, no hot-reloading here.\n- Please re-run 'npm run dev' when you make changes.\" ; vite build ; node server/main.js",
+    "build": "vite build"
   },
   "devDependencies": {
     "dotenv": "^17.2.3",
