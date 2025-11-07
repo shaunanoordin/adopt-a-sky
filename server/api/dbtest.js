@@ -11,6 +11,7 @@ export default async function api_test (clientRequest, serverResponse) {
     })
 
     await sequelize.authenticate()
+    sequelize.close()
 
     serverResponse
     .status(200)
