@@ -54,7 +54,7 @@ class WebApp {
       // Hey server, can you please confirm that user X with token Y is who
       // they say they are?
       const res = await fetch('/api/auth', {
-        method: 'POST',
+        // method: 'GET',
         headers: {
           'Authorization': userToken ? `Bearer ${userToken}` : undefined,
           'Content-Type': 'application/json',

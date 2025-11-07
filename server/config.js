@@ -11,4 +11,6 @@ export const config = {
   databaseDbname: process.env.DATABASE_DBNAME || '',
   databaseUsername: process.env.DATABASE_USERNAME || '',
   databasePassword: process.env.DATABASE_PASSWORD || '',
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+  googleAuthIssuer: 'https://accounts.google.com',
 }

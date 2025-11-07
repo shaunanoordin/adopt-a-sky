@@ -3,7 +3,10 @@ import https from 'https'
 import selfsigned from 'selfsigned'
 
 import { config } from './config.js'
+import checkAuth from './checkAuth.js'
+
 import api_auth from './api/auth.js'
+import api_authtest from './api/authtest.js'
 import api_test from './api/test.js'
 import api_dbtest from './api/dbtest.js'
 import api_dbtest2 from './api/dbtest2.js'
@@ -25,8 +28,9 @@ server.use(express.json())
 server.use(express.urlencoded({ extended: true }))
 
 // API paths
+server.all('/api/{*any}', checkAuth)  // Check user auth before every API call.
 server.get('/api/auth', api_auth)
-server.post('/api/auth', api_auth)
+// server.post('/api/auth', api_auth)
 server.get('/api/test', api_test)
 server.get('/api/dbtest', api_dbtest)
 server.get('/api/dbtest2', api_dbtest2)

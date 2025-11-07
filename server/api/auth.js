@@ -1,46 +1,56 @@
 /*
-Authenticate User
- */
-
-import { OAuth2Client } from  'google-auth-library'
-
-async function verifyGoogleIdentityToken (token) {
-  const oauthClient = new OAuth2Client()
-  const ticket = await oauthClient.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-  })
-  const payload = ticket.getPayload()
-  // const userId = payload['sub']  // Unique user ID, string. Use as primary key; don't use email as that may change.
-  // console.log(userId)
-
-  return payload
-}
+Endpoing for checking user authentication.
+- And by "is the user authenticated?", we really mean "is the JWToken sent in
+  the HTTP Authorization header legit?" 
+- Returns 200 (plus user data) if the user is authenticated.
+- Returns 401 if the user isn't.
+- Relies on checkAuth to do the actual work, and assumes that checkAuth was run
+  before this function. 
+*/
 
 export default async function api_auth (clientRequest, serverResponse) {
   try {
-    const auth = clientRequest.get('Authorization')
-    const userToken = auth?.match(/(^Bearer )(.*)/)?.[2]
-    const userData = await verifyGoogleIdentityToken(userToken)
-    
-    serverResponse
-    .status(200)
-    .json({
-      status: 'ok',
-      message: 'User authenticated',
-      debugRequestBody: clientRequest.body,
-      debugGooglePayload: userData,
-    })
+    const {
+      userAuthenticated,
+      userEmail,
+      userId,
+      userName,
+    } = serverResponse.locals
+
+    if (userAuthenticated) {
+
+      serverResponse
+      .status(200)
+      .json({
+        status: 'ok',
+        message: 'User authenticated',
+        user: {
+          id: userId,
+          email: userEmail,
+          name: userName,
+        },
+      })
+
+    } else {
+
+      serverResponse
+      .status(401)
+      .json({
+        status: 'error',
+        message: 'User not authenticated',
+      })
+
+    }
 
   } catch (err) {
 
     console.error(err)
 
     serverResponse
-    .status(401)
+    .status(500)
     .json({
       status: 'error',
-      message: 'User not authorised',
+      message: 'Unknown error',
     })
 
   }
