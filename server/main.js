@@ -5,6 +5,7 @@ import selfsigned from 'selfsigned'
 import { config } from './config.js'
 import api_auth from './api/auth.js'
 import api_test from './api/test.js'
+import api_dbtest from './api/dbtest.js'
 
 const server = express()
 
@@ -26,6 +27,7 @@ server.use(express.urlencoded({ extended: true }))
 server.get('/api/auth', api_auth)
 server.post('/api/auth', api_auth)
 server.get('/api/test', api_test)
+server.get('/api/dbtest', api_dbtest)
 
 // All other paths: serve static files
 server.use(express.static('dist'))

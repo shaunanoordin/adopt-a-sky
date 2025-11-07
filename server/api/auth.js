@@ -32,7 +32,7 @@ export default async function api_auth (clientRequest, serverResponse) {
     serverResponse
     .status(200)
     .json({
-      status: 'OK',
+      status: 'ok',
       message: 'User authenticated',
       debugRequestBody: clientRequest.body,
     })
