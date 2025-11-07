@@ -2,6 +2,9 @@ import express from 'express'
 import https from 'https'
 import selfsigned from 'selfsigned'
 
+import connectDatabase from './database/connectDatabase.js'
+import defineUser from './database/defineUser.js'
+
 import { config } from './config.js'
 import checkAuth from './checkAuth.js'
 
@@ -13,16 +16,6 @@ import api_dbtest2 from './api/dbtest2.js'
 
 const server = express()
 
-function checkOrigin (req, res, next) {
-  const origin = req.get('origin') || ''
-  console.log('Request from: ', origin)
-  // TODO
-  next()
-}
-
-// Apply origin checks
-server.use(checkOrigin)
-
 // Allow server to read JSON payloads
 server.use(express.json())
 server.use(express.urlencoded({ extended: true }))
@@ -30,13 +23,18 @@ server.use(express.urlencoded({ extended: true }))
 // API paths
 server.all('/api/{*any}', checkAuth)  // Check user auth before every API call.
 server.get('/api/auth', api_auth)
-// server.post('/api/auth', api_auth)
+server.get('/api/authtest', api_authtest)
 server.get('/api/test', api_test)
 server.get('/api/dbtest', api_dbtest)
 server.get('/api/dbtest2', api_dbtest2)
 
 // All other paths: serve static files
 server.use(express.static('dist'))
+
+// Prepare database
+const sequelize = connectDatabase()
+defineUser(sequelize)
+await sequelize.sync()
 
 if (process.env.NODE_ENV === 'production') {
   server.listen(config.port, (err) => {
