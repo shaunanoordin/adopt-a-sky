@@ -132,6 +132,13 @@ class WebApp {
       $('#user-details').innerHTML = ''
 
     }
+
+    // Update debug information
+    const htmlApp = $('#app')
+    const htmlList = document.createElement('ul')
+    while (htmlApp.firstChild) { htmlApp.removeChild(htmlApp.firstChild) }
+
+    htmlApp.appendChild(htmlList)
   }
 }
 

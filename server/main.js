@@ -45,7 +45,7 @@ if (process.env.NODE_ENV === 'production') {
     console.log(`Acceptable origins: ${config.origins.split(';')}`)
   })
 } else {
-  const attrs = [{ name: 'commonName', value: 'local.example.com' }]
+  const attrs = [{ name: 'commonName', value: 'adopt-a-sky localhost:3666' }]
   const { cert, private: key } = selfsigned.generate(attrs, {
     days: 365,
     keySize: 2048  // A large key size is required for Node 24+
