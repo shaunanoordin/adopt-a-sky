@@ -5,6 +5,10 @@ function $ (arg) {
   return document.querySelector(arg)
 }
 
+function $create (arg) {
+  return document.createElement(arg)
+}
+
 class WebApp {
   constructor () {
     // JSON Web Token.
@@ -133,12 +137,44 @@ class WebApp {
 
     }
 
+    this.debugGetUsers()
+  }
+
+  async debugGetUsers () {
     // Update debug information
     const htmlApp = $('#app')
-    const htmlList = document.createElement('ul')
+    const htmlList = $create('ul')
     while (htmlApp.firstChild) { htmlApp.removeChild(htmlApp.firstChild) }
 
-    htmlApp.appendChild(htmlList)
+    const res = await fetch('/api/users')
+
+    if (res.status === 200) {
+      const resJson = await res.json()
+      const users = resJson.users || []
+      
+      users.forEach(user => {
+        const htmlLI = $create('li')
+        htmlLI.style.display = 'flex'
+        htmlLI.style.gap = '1em'
+
+        const htmlSpan1 = $create('span')
+        htmlSpan1.style.fontWeight = 'bold'
+        htmlSpan1.innerText = user.id
+
+        const htmlSpan2 = $create('span')
+        htmlSpan2.innerText = user.name
+
+        htmlLI.appendChild(htmlSpan1)
+        htmlLI.appendChild(htmlSpan2)
+        htmlList.appendChild(htmlLI)
+      })
+
+      htmlApp.appendChild(htmlList)
+
+
+    } else {
+      console.error(res.status)
+    }
   }
 }
 

@@ -9,16 +9,16 @@ export default async function api_users (clientRequest, serverResponse) {
     const User = defineUser(sequelize)
 
     const users = await User.findAll()
-    const data = users.map(itm => ({
-      id: itm.id,
-      name: itm.name,
+    const usersData = users.map(itm => ({
+      id: itm.id.substr(0, 8) + '***',
+      name: itm.name.substr(0, 8) + '***',
     }))
 
     serverResponse
     .status(200)
     .json({
       status: 'ok',
-      data,
+      users: usersData,
     })
 
   } catch (err) {
