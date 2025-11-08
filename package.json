@@ -6,21 +6,22 @@
   "type": "module",
   "scripts": {
     "start": "node server/main.js",
-    "dev": "vite",
-    "build": "vite build",
-    "server": "node server/main.js"
+    "dev": "echo \"Dev Mode:\n- Sorry, no hot-reloading here.\n- Please re-run 'npm run dev' when you make changes.\" ; vite build ; node server/main.js",
+    "build": "vite build"
   },
   "devDependencies": {
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "https": "^1.0.0",
-    "selfsigned": "^3.0.1",
     "vite": "^7.1.7"
   },
   "engine": {
     "node": ">= 24"
   },
   "dependencies": {
-    "google-auth-library": "^10.5.0"
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "google-auth-library": "^10.5.0",
+    "https": "^1.0.0",
+    "pg": "^8.16.3",
+    "selfsigned": "^4.0.0",
+    "sequelize": "^6.37.7"
   }
 }

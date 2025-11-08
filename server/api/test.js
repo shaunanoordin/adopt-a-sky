@@ -39,7 +39,7 @@ export default async function api_test (clientRequest, serverResponse) {
     serverResponse
     .status(200)
     .json({
-      status: 'OK',
+      status: 'ok',
       data: processedData
     })
 

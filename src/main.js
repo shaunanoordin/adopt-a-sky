@@ -5,6 +5,10 @@ function $ (arg) {
   return document.querySelector(arg)
 }
 
+function $create (arg) {
+  return document.createElement(arg)
+}
+
 class WebApp {
   constructor () {
     // JSON Web Token.
@@ -54,7 +58,7 @@ class WebApp {
       // Hey server, can you please confirm that user X with token Y is who
       // they say they are?
       const res = await fetch('/api/auth', {
-        method: 'POST',
+        // method: 'GET',
         headers: {
           'Authorization': userToken ? `Bearer ${userToken}` : undefined,
           'Content-Type': 'application/json',
@@ -131,6 +135,45 @@ class WebApp {
       $('#user-details').style.display = 'none'
       $('#user-details').innerHTML = ''
 
+    }
+
+    this.debugGetUsers()
+  }
+
+  async debugGetUsers () {
+    // Update debug information
+    const htmlApp = $('#app')
+    const htmlList = $create('ul')
+    while (htmlApp.firstChild) { htmlApp.removeChild(htmlApp.firstChild) }
+
+    const res = await fetch('/api/users')
+
+    if (res.status === 200) {
+      const resJson = await res.json()
+      const users = resJson.users || []
+      
+      users.forEach(user => {
+        const htmlLI = $create('li')
+        htmlLI.style.display = 'flex'
+        htmlLI.style.gap = '1em'
+
+        const htmlSpan1 = $create('span')
+        htmlSpan1.style.fontWeight = 'bold'
+        htmlSpan1.innerText = user.id
+
+        const htmlSpan2 = $create('span')
+        htmlSpan2.innerText = user.name
+
+        htmlLI.appendChild(htmlSpan1)
+        htmlLI.appendChild(htmlSpan2)
+        htmlList.appendChild(htmlLI)
+      })
+
+      htmlApp.appendChild(htmlList)
+
+
+    } else {
+      console.error(res.status)
     }
   }
 }
