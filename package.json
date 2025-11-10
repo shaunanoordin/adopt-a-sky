@@ -16,6 +16,7 @@
     "node": ">= 24"
   },
   "dependencies": {
+    "aladin-lite": "^3.7.3-beta",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "google-auth-library": "^10.5.0",
