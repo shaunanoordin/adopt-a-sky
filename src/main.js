@@ -32,6 +32,9 @@ class WebApp {
     // Bind functions and event handlers.
     this.doSignOut = this.doSignOut.bind(this)
     $('#signout-button').addEventListener('click', this.doSignOut)
+
+    this.doSkyMapDebugControlsUpdate = this.doSkyMapDebugControlsUpdate.bind(this)
+    $('#sky-map-debug-controls').addEventListener('submit', this.doSkyMapDebugControlsUpdate)
   }
 
   // Starts the app, once the window has fully loaded.
@@ -50,7 +53,7 @@ class WebApp {
       $('#sky-map').style.width = '100%'
       $('#sky-map').style.height = '400px'
       this.skyMap = Aladin.aladin('#sky-map', {
-        fov: 360,
+        fov: 500 / 3600,  // Radius of adopted patch, in degrees.
         projection: 'AIT',
         cooFrame: 'equatorial',
         showCooGridControl: true,
@@ -195,6 +198,29 @@ class WebApp {
     } else {
       console.error(res.status)
     }
+  }
+
+  doSkyMapDebugControlsUpdate (event) {
+    event?.preventDefault()
+
+    function getVal (arg) {
+      return parseInt($(arg)?.value) || undefined
+    }
+
+    const [ curRa, curDec ] = this.skyMap.getRaDec()
+    const curRadius = this.skyMap.getFov()
+
+    const ra =  getVal('#sky-map-debug-controls input[name=ra]') ?? curRa
+    const dec = getVal('#sky-map-debug-controls input[name=dec]') ?? curDec
+    const radius = getVal('#sky-map-debug-controls input[name=radius]') ?? curRadius
+
+    $('#sky-map-debug-controls input[name=ra]').value = ra
+    $('#sky-map-debug-controls input[name=dec]').value = dec
+    $('#sky-map-debug-controls input[name=radius]').value = radius
+
+    console.log(ra, dec, radius)
+
+    this.skyMap?.gotoRaDec(ra, dec)
   }
 }
 
