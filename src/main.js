@@ -1,5 +1,6 @@
 import './style.css'
 import decodeJWT from './util/decodeJWT.js'
+import Aladin from 'aladin-lite'
 
 function $ (arg) {
   return document.querySelector(arg)
@@ -26,6 +27,8 @@ class WebApp {
     // - Used to see when it's safe to serve user-related features.
     this.userChecked = false
 
+    this.skyMap = null
+
     // Bind functions and event handlers.
     this.doSignOut = this.doSignOut.bind(this)
     $('#signout-button').addEventListener('click', this.doSignOut)
@@ -36,8 +39,27 @@ class WebApp {
   // - Initiates the "do I have a legit user?" check.
   start () {
     console.log('start()')
+    this.startSkyMap()
     this.update()
     this.checkAuth()
+  }
+
+  startSkyMap () {
+    console.log('startSkyMap()')
+    try {
+      $('#sky-map').style.width = '100%'
+      $('#sky-map').style.height = '400px'
+      this.skyMap = Aladin.aladin('#sky-map', {
+        fov: 360,
+        projection: 'AIT',
+        cooFrame: 'equatorial',
+        showCooGridControl: true,
+        showSimbadPointerControl: true,
+        showCooGrid: true
+      })
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   // Check if user is currently authenticated, by confirming with the server.
@@ -142,9 +164,10 @@ class WebApp {
 
   async debugGetUsers () {
     // Update debug information
-    const htmlApp = $('#app')
+    const htmlDebug = $('#debug')
     const htmlList = $create('ul')
-    while (htmlApp.firstChild) { htmlApp.removeChild(htmlApp.firstChild) }
+    while (htmlDebug.firstChild) { htmlDebug.removeChild(htmlDebug.firstChild) }
+    htmlDebug.appendChild(htmlList)
 
     const res = await fetch('/api/users')
 
@@ -168,9 +191,6 @@ class WebApp {
         htmlLI.appendChild(htmlSpan2)
         htmlList.appendChild(htmlLI)
       })
-
-      htmlApp.appendChild(htmlList)
-
 
     } else {
       console.error(res.status)
