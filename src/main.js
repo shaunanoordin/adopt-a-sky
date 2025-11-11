@@ -1,5 +1,6 @@
 import './style.css'
 import decodeJWT from './util/decodeJWT.js'
+import Aladin from 'aladin-lite'
 
 function $ (arg) {
   return document.querySelector(arg)
@@ -26,9 +27,14 @@ class WebApp {
     // - Used to see when it's safe to serve user-related features.
     this.userChecked = false
 
+    this.skyMap = null
+
     // Bind functions and event handlers.
     this.doSignOut = this.doSignOut.bind(this)
     $('#signout-button').addEventListener('click', this.doSignOut)
+
+    this.doSkyMapDebugControlsUpdate = this.doSkyMapDebugControlsUpdate.bind(this)
+    $('#sky-map-debug-controls').addEventListener('submit', this.doSkyMapDebugControlsUpdate)
   }
 
   // Starts the app, once the window has fully loaded.
@@ -36,8 +42,27 @@ class WebApp {
   // - Initiates the "do I have a legit user?" check.
   start () {
     console.log('start()')
+    this.startSkyMap()
     this.update()
     this.checkAuth()
+  }
+
+  startSkyMap () {
+    console.log('startSkyMap()')
+    try {
+      $('#sky-map').style.width = '100%'
+      $('#sky-map').style.height = '400px'
+      this.skyMap = Aladin.aladin('#sky-map', {
+        fov: 500 / 3600,  // Radius of adopted patch, in degrees.
+        projection: 'AIT',
+        cooFrame: 'equatorial',
+        showCooGridControl: true,
+        showSimbadPointerControl: true,
+        showCooGrid: true
+      })
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   // Check if user is currently authenticated, by confirming with the server.
@@ -69,7 +94,7 @@ class WebApp {
       this.userChecked = true
 
       // If we don't get a 200 response, user isn't authenticated properly.
-      if (res.status !== 200) throw new Error(`/api/auth returned ${res.status}`)
+      if (res.status !== 200) { throw new Error(`/api/auth returned ${res.status}`) }
 
       // If we get a 200 response, we can confirm that user is legit.
       this.update()
@@ -142,9 +167,10 @@ class WebApp {
 
   async debugGetUsers () {
     // Update debug information
-    const htmlApp = $('#app')
+    const htmlDebug = $('#debug')
     const htmlList = $create('ul')
-    while (htmlApp.firstChild) { htmlApp.removeChild(htmlApp.firstChild) }
+    htmlDebug.innerHTML = ''
+    htmlDebug.appendChild(htmlList)
 
     const res = await fetch('/api/users')
 
@@ -169,11 +195,60 @@ class WebApp {
         htmlList.appendChild(htmlLI)
       })
 
-      htmlApp.appendChild(htmlList)
-
-
     } else {
       console.error(res.status)
+    }
+  }
+
+  doSkyMapDebugControlsUpdate (event) {
+    event?.preventDefault()
+
+    function getVal (arg) {
+      return parseInt($(arg)?.value) || undefined
+    }
+
+    const [ curRa, curDec ] = this.skyMap.getRaDec()
+    const curRadius = this.skyMap.getFov()
+
+    const ra =  getVal('#sky-map-debug-controls input[name=ra]') ?? curRa
+    const dec = getVal('#sky-map-debug-controls input[name=dec]') ?? curDec
+    const radius = getVal('#sky-map-debug-controls input[name=radius]') ?? curRadius
+
+    $('#sky-map-debug-controls input[name=ra]').value = ra
+    $('#sky-map-debug-controls input[name=dec]').value = dec
+    $('#sky-map-debug-controls input[name=radius]').value = radius
+
+    console.log(ra, dec, radius)
+
+    this.skyMap?.gotoRaDec(ra, dec)
+    this.getSkyData(ra, dec, radius)
+  }
+
+  async getSkyData (ra, dec, radius) {
+    const htmlSkyData = $('#sky-data')
+
+    try {
+      htmlSkyData.innerHTML = '<li class="info message">Checking what\'s available in this patch of sky...</>'
+
+      const searchQuery = new URLSearchParams({ ra, dec, radius })
+      const res = await fetch(`/api/skydata?${searchQuery}`)
+      if (res.status !== 200) { throw new Error('Could not fetch data') }
+      const resJson = await res.json()
+      const data = resJson?.data || []
+
+      htmlSkyData.innerHTML = ``
+      data.forEach(item => {
+        const htmlLI = $create('li')
+        htmlLI.innerText = `Object: ${item.object}`
+        htmlSkyData.appendChild(htmlLI)
+      })
+      if (data.length === 0) {
+        htmlSkyData.innerHTML = `<li class="info message">Nothing has been found in this patch of sky</li>`
+      }
+
+    } catch (err) {
+      console.error(err)
+      htmlSkyData.innerHTML = `<li class="error message">ERROR: ${err}</li>`
     }
   }
 }
