@@ -228,15 +228,23 @@ class WebApp {
     const htmlSkyData = $('#sky-data')
 
     try {
-      htmlSkyData.innerHTML = '<li class="info message">Checking data...</>'
+      htmlSkyData.innerHTML = '<li class="info message">Checking what\'s available in this patch of sky...</>'
 
       const searchQuery = new URLSearchParams({ ra, dec, radius })
       const res = await fetch(`/api/skydata?${searchQuery}`)
       if (res.status !== 200) { throw new Error('Could not fetch data') }
-
-      console.log('+++ res: ', res)
+      const resJson = await res.json()
+      const data = resJson?.data || []
 
       htmlSkyData.innerHTML = ``
+      data.forEach(item => {
+        const htmlLI = $create('li')
+        htmlLI.innerText = `Object: ${item.object}`
+        htmlSkyData.appendChild(htmlLI)
+      })
+      if (data.length === 0) {
+        htmlSkyData.innerHTML = `<li class="info message">Nothing has been found in this patch of sky</li>`
+      }
 
     } catch (err) {
       console.error(err)
