@@ -9,6 +9,7 @@ import { config } from './config.js'
 import checkAuth from './checkAuth.js'
 
 import api_auth from './api/auth.js'
+import api_skydata from './api/skydata.js'
 import api_authtest from './api/authtest.js'
 import api_test from './api/test.js'
 import api_dbtest from './api/dbtest.js'
@@ -24,6 +25,7 @@ server.use(express.urlencoded({ extended: true }))
 // API paths
 server.all('/api/{*any}', checkAuth)  // Check user auth before every API call.
 server.get('/api/auth', api_auth)
+server.get('/api/skydata', api_skydata)
 
 // API test paths
 server.get('/api/authtest', api_authtest)
