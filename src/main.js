@@ -94,7 +94,7 @@ class WebApp {
       this.userChecked = true
 
       // If we don't get a 200 response, user isn't authenticated properly.
-      if (res.status !== 200) throw new Error(`/api/auth returned ${res.status}`)
+      if (res.status !== 200) { throw new Error(`/api/auth returned ${res.status}`) }
 
       // If we get a 200 response, we can confirm that user is legit.
       this.update()
@@ -169,7 +169,7 @@ class WebApp {
     // Update debug information
     const htmlDebug = $('#debug')
     const htmlList = $create('ul')
-    while (htmlDebug.firstChild) { htmlDebug.removeChild(htmlDebug.firstChild) }
+    htmlDebug.innerHTML = ''
     htmlDebug.appendChild(htmlList)
 
     const res = await fetch('/api/users')
@@ -221,6 +221,27 @@ class WebApp {
     console.log(ra, dec, radius)
 
     this.skyMap?.gotoRaDec(ra, dec)
+    this.getSkyData(ra, dec, radius)
+  }
+
+  async getSkyData (ra, dec, radius) {
+    const htmlSkyData = $('#sky-data')
+
+    try {
+      htmlSkyData.innerHTML = '<li class="info message">Checking data...</>'
+
+      const searchQuery = new URLSearchParams({ ra, dec, radius })
+      const res = await fetch(`/api/skydata?${searchQuery}`)
+      if (res.status !== 200) { throw new Error('Could not fetch data') }
+
+      console.log('+++ res: ', res)
+
+      htmlSkyData.innerHTML = ``
+
+    } catch (err) {
+      console.error(err)
+      htmlSkyData.innerHTML = `<li class="error message">ERROR: ${err}</li>`
+    }
   }
 }
 
