@@ -28,6 +28,7 @@ class WebApp {
 
     // The currently viewed page
     this.page = undefined
+    this.pageName = ''
 
     // Bind functions and event handlers.
     this.doSignOut = this.doSignOut.bind(this)
@@ -43,7 +44,16 @@ class WebApp {
     this.update()
     this.checkAuth()
 
-    this.page = new SkyPage(this)
+    // Select current page
+    this.pageName = $('main')?.className
+    switch (this.pageName) {
+      case 'sky-page':
+        this.page = new SkyPage(this)
+        break
+      default:
+        this.page = undefined
+    }
+    
     this.page?.start()
   }
 
