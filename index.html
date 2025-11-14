@@ -5,12 +5,20 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Adopt-A-Sky</title>
+    <script type="module" src="/src/main.js"></script>
 
     <!-- Google Sign-In -->
     <script src="https://accounts.google.com/gsi/client" async></script>
+    <script>
+      function handleSignIn (response) {
+        const token = response.credential
+        window?.webapp?.onSignIn(token)
+      }
+    </script>
     <!-- /Google Sign-In -->
   </head>
   <body>
+    <!-- Header -->
     <header>
       <h1>Adopt-A-Sky</h1>
 
@@ -44,7 +52,10 @@
       >Sign Out</button>
 
     </header>
-    <main div id="app">
+    <!-- /Header -->
+
+    <!-- Content -->
+    <main data-page="test">
       <div id="sky-map"></div>
       <form id="sky-map-debug-controls">
         <h2>Debug Zone: where should we point the telescope?</h2>
@@ -68,12 +79,6 @@
         <div id="debug"></div>
       </div>
     </main>
-    <script type="module" src="/src/main.js"></script>
+    <!-- /Content -->
   </body>
-  <script>
-    function handleSignIn (response) {
-      const token = response.credential
-      window?.webapp?.onSignIn(token)
-    }
-  </script>
 </html>
