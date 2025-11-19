@@ -1,6 +1,9 @@
 import './style.css'
 import { $ } from './util/html.js'
 import decodeJWT from './util/decodeJWT.js'
+
+import AdoptPage from './pages/adopt-page.js'
+import DebugPage from './pages/debug-page.js'
 import SkyPage from './pages/sky-page.js'
 
 class WebApp {
@@ -44,6 +47,12 @@ class WebApp {
     // Select current page
     this.pageName = $('main')?.className
     switch (this.pageName) {
+      case 'adopt-page':
+        this.page = new AdoptPage(this)
+        break
+      case 'debug-page':
+        this.page = new DebugPage(this)
+        break
       case 'sky-page':
         this.page = new SkyPage(this)
         break
@@ -172,9 +181,9 @@ class WebApp {
     // adoption page. Limit this to certain pages only.
     if (
       this.userData?.patch_adopted === false
-      && ['sky-page'].includes(this.pageName)
+      && ['index-page', 'sky-page'].includes(this.pageName)
     ) {
-      window.location = '/adopt.html'
+      window.location = '/view/adopt.html'
       return false
     }
 
