@@ -1,6 +1,21 @@
-export default {
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { defineConfig } from 'vite'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      input: {
+        index: resolve(__dirname, 'index.html'),
+        adopt: resolve(__dirname, 'adopt.html'),
+        // nested: resolve(__dirname, 'nested/index.html'),
+      },
+    },
+  },
   esbuild: {  // Don't minify function names, so Sign In with Google can access the callback.
     minifyIdentifiers: false,
     keepNames: true,
   }
-}
+})
