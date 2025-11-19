@@ -1,18 +1,11 @@
 /*
 Sky Viewer Page
 Displays the sky map and shows what's happening in the adopted patch of sky.
-Only valid if 
+Only valid if user is logged in, and has adopted a patch of sky.
  */
 
 import Aladin from 'aladin-lite'
-
-function $ (arg) {
-  return document.querySelector(arg)
-}
-
-function $create (arg) {
-  return document.createElement(arg)
-}
+import { $, $create } from '../util/html.js'
 
 export default class SkyPage {
   constructor (app) {

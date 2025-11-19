@@ -1,10 +1,7 @@
 import './style.css'
+import { $ } from './util/html.js'
 import decodeJWT from './util/decodeJWT.js'
 import SkyPage from './pages/sky-page.js'
-
-function $ (arg) {
-  return document.querySelector(arg)
-}
 
 class WebApp {
   constructor () {
