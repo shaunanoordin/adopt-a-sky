@@ -183,7 +183,7 @@ class WebApp {
       this.userData?.patch_adopted === false
       && ['index-page', 'sky-page'].includes(this.pageName)
     ) {
-      window.location = '/view/adopt.html'
+      window.location = '/view/adopt'
       return false
     }
 

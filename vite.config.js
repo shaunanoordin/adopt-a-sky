@@ -9,10 +9,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: resolve(__dirname, 'index.html'),
-        about: resolve(__dirname, 'view/about.html'),
-        adopt: resolve(__dirname, 'view/adopt.html'),
-        debut: resolve(__dirname, 'view/debug.html'),
-        sky: resolve(__dirname, 'view/sky.html'),
+        about: resolve(__dirname, 'view/about/index.html'),
+        adopt: resolve(__dirname, 'view/adopt/index.html'),
+        debut: resolve(__dirname, 'view/debug/index.html'),
+        sky: resolve(__dirname, 'view/sky/index.html'),
       },
     },
   },
