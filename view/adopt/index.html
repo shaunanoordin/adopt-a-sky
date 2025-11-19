@@ -60,18 +60,33 @@
     <main class="adopt-page">
       <h2>Adopt a Patch of Sky</h2>
 
-      <section id="anonymous-section">
+      <section
+        id="anonymous-section"
+        class="conditional"
+      >
         <div class="message">
           <h3>Not Logged In</h3>
           <p>Please log in</p>
         </div>
       </section>
 
-      <section id="anonymous-section">
+      <section
+        id="adopted-section"
+        class="conditional"
+      >
         <div class="message">
-          <h3>Not Logged In</h3>
-          <p>Please log in</p>
+          <h3>Already Adopted</h3>
+          <p>You've already adopted a patch of sky!</p>
+          <p><a href="/view/sky/">View it here</a></p>
         </div>
+      </section>
+
+      <section
+        id="adoption-section"
+        class="conditional"
+      >
+        <h3>Let's find a patch of sky just for you!</h3>
+
       </section>
     </main>
     <!-- /Content -->

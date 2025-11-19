@@ -3,8 +3,8 @@
   line-height: 1.5;
   font-weight: 400;
 
-  background: #f0f0f0;
-  color: #404040;
+  background: hsl(0, 0%, 98%);
+  color: hsl(0, 0%, 20%);
 
   --col-light-1: #f0f0f0;
   --col-dark-1: #404040;
@@ -90,6 +90,9 @@ button {
 }
 
 .message {
+  border: 2px solid var(--col-theme-1);
   border-radius: 1em;
+  margin: 1em auto;
+  max-width: 400px;
   padding: 1em;
 }

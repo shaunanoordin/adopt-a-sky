@@ -20,9 +20,20 @@ export default class AdoptPage {
     // const okToContinue = this.doRedirectsIfNecessary()
     // if (!okToContinue) { return }
 
-    if (!app.userData) {
-      
+    // Reset
+    $('#anonymous-section').style.display = 'none'
+    $('#adopted-section').style.display = 'none'
+    $('#adoption-section').style.display = 'none'
+
+    if (!this.app.userData) {
+      $('#anonymous-section').style.display = 'block'
+      return
+    } else if (this.app.userData?.patch_adopted) {
+      $('#adopted-section').style.display = 'block'
+      return
     }
+
+    $('#adoption-section').style.display = 'block'
   }
 
   // Redirect users to other pages, if necessary.
@@ -33,7 +44,7 @@ export default class AdoptPage {
     // If user is logged in and HAS adopted a patch, redirect them to the
     // sky page
     if (
-      app.userData?.patch_adopted === true
+      this.app.userData?.patch_adopted === true
     ) {
       window.location = '/view/sky'
       return false
