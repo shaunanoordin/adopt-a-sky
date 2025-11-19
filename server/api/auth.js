@@ -44,11 +44,7 @@ export default async function api_auth (clientRequest, serverResponse) {
       .json({
         status: 'ok',
         message: 'User authenticated',
-        user: {
-          id: userId,
-          email: userEmail,
-          name: userName,
-        },
+        user,
       })
 
     } else {

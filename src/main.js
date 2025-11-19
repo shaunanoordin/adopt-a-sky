@@ -91,6 +91,8 @@ class WebApp {
       // If we get a 200 response, we can confirm that user is legit.
       const resJson = await res.json()
       this.userData = resJson.user
+      console.log('Logged-in User: ', this.userData)
+
       this.update()
 
     } catch (err) {
@@ -134,6 +136,9 @@ class WebApp {
   update () {
     console.log('update()')
 
+    const okToContinue = this.doRedirectsIfNecessary()
+    if (!okToContinue) { return }
+
     // Update header.
     const userToken = this.userToken
     const userInfo = decodeJWT(userToken)
@@ -159,6 +164,24 @@ class WebApp {
 
     // Update page.
     this.page?.update()
+  }
+
+  // Redirect users to other pages, if necessary.
+  // Returns true if no redirects are performed, but to be honest, the
+  // window.location change should pretty much terminate the code execution. 
+  doRedirectsIfNecessary () {
+
+    // If user is logged in but hasn't adopted a patch, redirect them to the
+    // adoption page. Limit this to certain pages only.
+    if (
+      this.userData?.patch_adopted === false
+      && ['sky-page'].includes(this.pageName)
+    ) {
+      window.location = '/adopt.html'
+      return false
+    }
+
+    return true
   }
 }
 

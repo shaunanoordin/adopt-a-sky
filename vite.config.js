@@ -10,7 +10,6 @@ export default defineConfig({
       input: {
         index: resolve(__dirname, 'index.html'),
         adopt: resolve(__dirname, 'adopt.html'),
-        // nested: resolve(__dirname, 'nested/index.html'),
       },
     },
   },
