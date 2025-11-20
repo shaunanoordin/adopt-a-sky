@@ -11,39 +11,50 @@ Endpoing for checking user authentication.
 import connectDatabase from '../database/connectDatabase.js'
 import defineUser from '../database/defineUser.js'
 
-export default async function api_auth (clientRequest, serverResponse) {
+export default async function api_adopt (clientRequest, serverResponse) {
   try {
     const {
       userAuthenticated,
-      userEmail,
       userId,
-      userName,
     } = serverResponse.locals
 
     if (userAuthenticated) {
 
-      // Add user into database
-      // --------
       const sequelize = connectDatabase()
       const User = defineUser(sequelize)
       let user = await User.findByPk(userId)
-      if (!user) {
-        user = await User.create({
-          id: userId,
-          name: userName,
-          email: userEmail,
-        })
-        console.log(`➕ Created new user: ${user.id}, ${user.name}, ${user.email}`)
+      if (!user) { throw new Error('User somehow does not exist in the database. This should be impossible.') }
+
+      const ra = 0.0
+
+      let status = ''
+      let message = ''
+      if (user.patch_adopted) {
+
+        status = 'noop'
+        message = 'Patch already adopted'
+
       } else {
-        console.log(`🟰 User already exists: ${user.id}, ${user.name}, ${user.email}`)
+
+        /*
+        user.set({
+          patch_adopted: true,
+          ra,
+          dec,
+        })
+        await user.save()
+        */
+
+        status = 'ok'
+        message = 'Patch adopted'
+
       }
-      // --------
       
       serverResponse
       .status(200)
       .json({
-        status: 'ok',
-        message: 'User authenticated',
+        status,
+        message,
         user,
       })
 
