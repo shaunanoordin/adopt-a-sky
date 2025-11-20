@@ -45,7 +45,7 @@ export default async function api_adopt (clientRequest, serverResponse) {
           patch_adopted: true,
           patch_ra: ra,
           patch_dec: dec,
-          patch_radius: config.defaultRadius,
+          patch_radius: config.defaultRadiusInDegrees,
         })
         await user.save()
 

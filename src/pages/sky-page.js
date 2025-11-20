@@ -62,7 +62,7 @@ export default class SkyPage {
     return true
   }
 
-  startSkyMap (ra, dec, radiusInArcSeconds) {
+  startSkyMap (ra, dec, radiusInDegrees) {
     console.log('startSkyMap()')
 
     try {
@@ -72,7 +72,7 @@ export default class SkyPage {
       $('#sky-map').style.height = '400px'
 
       this.skyMap = Aladin.aladin('#sky-map', {
-        fov: radiusInArcSeconds / 3600,  // Radius of adopted patch, in degrees.
+        fov: radiusInDegrees,
         projection: 'AIT',
         cooFrame: 'equatorial',
         showCooGridControl: true,
@@ -86,13 +86,13 @@ export default class SkyPage {
     }
   }
 
-  async getSkyData (ra, dec, radiusInArcSeconds) {
+  async getSkyData (ra, dec, radiusInDegrees) {
     const htmlSkyData = $('#sky-data')
 
     try {
       htmlSkyData.innerHTML = '<li class="info message">Checking what\'s available in this patch of sky...</>'
 
-      const searchQuery = new URLSearchParams({ ra, dec, radiusInArcSeconds })
+      const searchQuery = new URLSearchParams({ ra, dec, radiusInDegrees })
       const res = await fetch(`/api/skydata?${searchQuery}`)
       if (res.status !== 200) { throw new Error('Could not fetch data') }
       const resJson = await res.json()

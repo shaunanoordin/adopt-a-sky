@@ -2,6 +2,8 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+const DEFAULT_RADIUS_IN_ARCSECONDS = 500  // This is pretty arbitrary.
+
 export const config = {
   origins: process.env.ORIGINS || 'https://localhost:3666;https://local.example.com:3666',
   port: process.env.PORT || 3666,
@@ -13,5 +15,5 @@ export const config = {
   databasePassword: process.env.DATABASE_PASSWORD || '',
   googleClientId: process.env.GOOGLE_CLIENT_ID || '',
   googleAuthIssuer: 'https://accounts.google.com',
-  defaultRadius: 500,  // Arcseconds
+  defaultRadiusInDegrees: DEFAULT_RADIUS_IN_ARCSECONDS / 3600, 
 }

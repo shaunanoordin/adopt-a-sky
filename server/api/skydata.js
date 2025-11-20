@@ -5,9 +5,9 @@ export default async function api_skydata (clientRequest, serverResponse) {
     // Get user input.
     let ra = parseFloat(clientRequest.query.ra)
     let dec = parseFloat(clientRequest.query.dec)
-    let radius = (parseFloat(clientRequest.query.radius))
-      ? parseFloat(clientRequest.query.radius) * 3600 // Convert radius (degrees) to radius (arcseconds)
-      : 500
+    let radiusInDegrees = (parseFloat(clientRequest.query.radius))
+      ? parseFloat(clientRequest.query.radius)
+      : config.defaultRadiusInDegrees
 
     if (isNaN(ra) || isNaN(dec)) { throw new Error('Invalid input') }
     // TODO: check if ra & dec are within correct bounds of degrees
@@ -15,10 +15,11 @@ export default async function api_skydata (clientRequest, serverResponse) {
     // Optional: Truncate input for sanity.
     ra = ra.toFixed(4)
     dec = dec.toFixed(4)
-    radius = radius.toFixed(0)
+    radiusInDegrees = radiusInDegrees.toFixed(4)
+    const radiusInArcSeconds = (radiusInDegrees * 3600).toFixed(0)
 
     // Fetch data from Lasair's "Cone Search" API.
-    const lasairResponse = await fetch(`${config.lasairApiUrl}cone/?ra=${ra}&dec=${dec}&radius=${radius}&requestType=all&token=${config.lasairApiKey}&format=json`)
+    const lasairResponse = await fetch(`${config.lasairApiUrl}cone/?ra=${ra}&dec=${dec}&radius=${radiusInArcSeconds}&requestType=all&token=${config.lasairApiKey}&format=json`)
     if (lasairResponse.status !== 200) throw new Error(`Lasair response error, status ${lasairResponse.status}`)
     const data = await lasairResponse.json()
     
