@@ -29,6 +29,7 @@ export default async function api_adopt (clientRequest, serverResponse) {
       const dec = parseFloat(clientRequest.body.dec).toFixed(4)
       
       if (isNaN(ra) || isNaN(dec)) { throw new Error('Invalid input') }
+      if (!(0 <= ra && ra <= 360) || !(-90 <= dec && dec <= 90)) { throw new Error('Invalid input') }
 
       let status = ''
       let message = ''
@@ -38,7 +39,7 @@ export default async function api_adopt (clientRequest, serverResponse) {
         message = 'Patch already adopted'
 
       } else {
-        
+
         user.set({
           patch_adopted: true,
           patch_ra: ra,
@@ -78,7 +79,7 @@ export default async function api_adopt (clientRequest, serverResponse) {
     .status(500)
     .json({
       status: 'error',
-      message: 'Unknown error',
+      message: err?.toString?.() || 'Unknown error',
     })
 
   }
