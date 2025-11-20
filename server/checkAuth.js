@@ -19,9 +19,6 @@ async function verifyGoogleIdentityToken (token) {
       audience: config.googleClientId,
   })
   const payload = ticket.getPayload()
-  // const userId = payload['sub']  // Unique user ID, string. Use as primary key; don't use email as that may change.
-  // console.log(userId)
-
   return payload
 }
 
