@@ -10,7 +10,7 @@ Endpoing for checking user authentication.
 
 import connectDatabase from '../database/connectDatabase.js'
 import defineUser from '../database/defineUser.js'
-import config from '../config.js'
+import { config } from '../config.js'
 
 export default async function api_adopt (clientRequest, serverResponse) {
   try {
