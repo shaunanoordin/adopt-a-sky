@@ -17,7 +17,9 @@ export default class AdoptPage {
     $('#adoption-form').addEventListener('submit', this.doAdoption)
   }
 
-  start () {}
+  start () {
+    this.update()
+  }
 
   update () {
     // const okToContinue = this.doRedirectsIfNecessary()
@@ -62,11 +64,12 @@ export default class AdoptPage {
     if (this.posting) { return }
     this.posting = true
     $('#adoption-form button[type=submit]').disabled = true
+    $('#adoption-form .status').innerText = 'Adopting...'
 
     try {
 
-      const ra = (parseFloat($('input[name="ra"]')?.value) || 0.0).toFixed(2)
-      const dec = (parseFloat($('input[name="dec"]')?.value) || 0.0).toFixed(2)
+      const ra = (parseFloat($('input[name="ra"]')?.value) || 0.0).toFixed(4)
+      const dec = (parseFloat($('input[name="dec"]')?.value) || 0.0).toFixed(4)
 
       const userToken = this.app.userToken
       const res = await fetch('/api/adopt', {
@@ -82,10 +85,19 @@ export default class AdoptPage {
 
       const resJson = await res.json()
 
+      if (resJson.status === 'ok') {
+        $('#adoption-form .status').innerText = 'Adoption complete!'
+      } else if (resJson.status === 'noop') {
+        $('#adoption-form .status').innerText = 'You\'ve already adopted a patch of sky.'
+      }
+
+      this.app.userData = resJson.user
+      this.update()
 
     } catch (err) {
-      console.error(err)
 
+      console.error(err)
+      $('#adoption-form .status').innerText = `ERROR ${err}`
 
     } finally {
       this.posting = false

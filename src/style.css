@@ -104,3 +104,33 @@ button {
   max-width: 400px;
   padding: 1em;
 }
+
+.adopt-page {
+
+  #adoption-form {
+
+    .status {
+      display: block;
+      margin: 1em 0;
+    }
+
+    .input {
+      display: flex;
+      gap: 1em;
+      margin: 1em 0;
+
+      label {
+        flex: 0 0 50%;
+      }
+
+      label {
+        flex: 0 0 auto;
+      }
+
+      input {
+        flex: 1 1 auto;
+      }
+    }
+
+  }
+}

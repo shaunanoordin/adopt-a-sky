@@ -25,7 +25,10 @@ export default async function api_adopt (clientRequest, serverResponse) {
       let user = await User.findByPk(userId)
       if (!user) { throw new Error('User somehow does not exist in the database. This should be impossible.') }
 
-      const ra = 0.0
+      const ra = parseFloat(clientRequest.body.ra).toFixed(4)
+      const dec = parseFloat(clientRequest.body.dec).toFixed(4)
+      
+      if (isNaN(ra) || isNaN(dec)) { throw new Error('Invalid input') }
 
       let status = ''
       let message = ''
@@ -35,15 +38,13 @@ export default async function api_adopt (clientRequest, serverResponse) {
         message = 'Patch already adopted'
 
       } else {
-
-        /*
+        
         user.set({
           patch_adopted: true,
-          ra,
-          dec,
+          patch_ra: ra,
+          patch_dec: dec,
         })
         await user.save()
-        */
 
         status = 'ok'
         message = 'Patch adopted'
