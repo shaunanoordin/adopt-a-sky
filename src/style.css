@@ -3,17 +3,26 @@
   line-height: 1.5;
   font-weight: 400;
 
-  background: #f0f0f0;
-  color: #404040;
+  background: hsl(0, 0%, 98%);
+  color: hsl(0, 0%, 20%);
+
+  --col-light-1: hsl(0, 0%, 98%);
+  --col-mid-1: hsl(0, 0%, 60%);
+  --col-dark-1: hsl(0, 0%, 20%);
+  --col-theme-1: hsl(210, 60%, 60%);
+  --col-interactive-1: hsl(45, 80%, 60%);
+  --col-interactive-2: hsl(45, 100%, 80%);
+  --col-interactive-3: hsl(45, 100%, 90%);
+  --col-uninteractive-1: hsl(240, 40%, 60%);
 }
 
 a {
   font-weight: 500;
-  color: #40c0c0;
+  color: var(--col-interactive-1);
   text-decoration: inherit;
 }
 a:hover {
-  color: #00f0f0;
+  color: var(--col-interactive-2);
 }
 
 html, body {
@@ -27,7 +36,8 @@ header {
   flex-direction: row;
   gap: 1em;
   padding: 1em;
-  background: #e0f0f0;
+  background: var(--col-theme-1);
+  color: var(--col-light-1);
 
   @media (max-width: 600px) {
     flex-direction: column;
@@ -38,30 +48,89 @@ header {
   }
 }
 
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1em;
+
+  section.s {
+    display: none;
+  }
+}
+
 h1 {
   padding: 0;
   margin: 0;
 }
 
 button {
-  background: #ffffff;
-  border: 1px solid #40c0c0;
-  color: #40c0c0;
+  background: var(--col-light-1);
+  border: 1px solid var(--col-interactive-1);
+  color: var(--col-interactive-1);
   cursor: pointer;
   border-radius: 0.5em;
   padding: 0.5em;
 
   &:hover, &:focus {
-    border: 1px solid #00f0f0;
-    color: #00f0f0;
+    border: 1px solid var(--col-interactive-2);
+    color: var(--col-interactive-2);
   }
 
   &:active {
-    border: 1px solid #80f0f0;
-    color: #80f0f0;
+    border: 1px solid var(--col-interactive-3);
+    color: var(--col-interactive-3);
+  }
+
+  &:disabled {
+    background: var(--col-mid-1);
+    color: var(--col-uninteractive-1);
+    border: 1px solid var(--col-uninteractive-1);
   }
 }
 
 .spacer {
   flex: 1 1 auto;
+}
+
+/* Conditional: start hidden, but displays when code tells it to. */
+.conditional {
+  display: none;
+}
+
+.message {
+  border: 2px solid var(--col-theme-1);
+  border-radius: 1em;
+  margin: 1em auto;
+  max-width: 400px;
+  padding: 1em;
+}
+
+.adopt-page {
+
+  #adoption-form {
+
+    .status {
+      display: block;
+      margin: 1em 0;
+    }
+
+    .input {
+      display: flex;
+      gap: 1em;
+      margin: 1em 0;
+
+      label {
+        flex: 0 0 50%;
+      }
+
+      label {
+        flex: 0 0 auto;
+      }
+
+      input {
+        flex: 1 1 auto;
+      }
+    }
+
+  }
 }

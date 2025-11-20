@@ -8,6 +8,7 @@ import defineUser from './database/defineUser.js'
 import { config } from './config.js'
 import checkAuth from './checkAuth.js'
 
+import api_adopt from './api/adopt.js'
 import api_auth from './api/auth.js'
 import api_skydata from './api/skydata.js'
 import api_authtest from './api/authtest.js'
@@ -24,6 +25,7 @@ server.use(express.urlencoded({ extended: true }))
 
 // API paths
 server.all('/api/{*any}', checkAuth)  // Check user auth before every API call.
+server.post('/api/adopt', api_adopt)
 server.get('/api/auth', api_auth)
 server.get('/api/skydata', api_skydata)
 

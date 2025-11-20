@@ -1,14 +1,10 @@
 import './style.css'
+import { $ } from './util/html.js'
 import decodeJWT from './util/decodeJWT.js'
-import Aladin from 'aladin-lite'
 
-function $ (arg) {
-  return document.querySelector(arg)
-}
-
-function $create (arg) {
-  return document.createElement(arg)
-}
+import AdoptPage from './pages/adopt-page.js'
+import DebugPage from './pages/debug-page.js'
+import SkyPage from './pages/sky-page.js'
 
 class WebApp {
   constructor () {
@@ -27,14 +23,17 @@ class WebApp {
     // - Used to see when it's safe to serve user-related features.
     this.userChecked = false
 
-    this.skyMap = null
+    // The actual user data, if any.
+    this.userData = undefined
+
+    // The currently viewed page
+    this.page = undefined
+    this.pageName = ''
 
     // Bind functions and event handlers.
     this.doSignOut = this.doSignOut.bind(this)
     $('#signout-button').addEventListener('click', this.doSignOut)
 
-    this.doSkyMapDebugControlsUpdate = this.doSkyMapDebugControlsUpdate.bind(this)
-    $('#sky-map-debug-controls').addEventListener('submit', this.doSkyMapDebugControlsUpdate)
   }
 
   // Starts the app, once the window has fully loaded.
@@ -42,27 +41,26 @@ class WebApp {
   // - Initiates the "do I have a legit user?" check.
   start () {
     console.log('start()')
-    this.startSkyMap()
     this.update()
     this.checkAuth()
-  }
 
-  startSkyMap () {
-    console.log('startSkyMap()')
-    try {
-      $('#sky-map').style.width = '100%'
-      $('#sky-map').style.height = '400px'
-      this.skyMap = Aladin.aladin('#sky-map', {
-        fov: 500 / 3600,  // Radius of adopted patch, in degrees.
-        projection: 'AIT',
-        cooFrame: 'equatorial',
-        showCooGridControl: true,
-        showSimbadPointerControl: true,
-        showCooGrid: true
-      })
-    } catch (err) {
-      console.error(err)
+    // Select current page
+    this.pageName = $('main')?.className
+    switch (this.pageName) {
+      case 'adopt-page':
+        this.page = new AdoptPage(this)
+        break
+      case 'debug-page':
+        this.page = new DebugPage(this)
+        break
+      case 'sky-page':
+        this.page = new SkyPage(this)
+        break
+      default:
+        this.page = undefined
     }
+    
+    this.page?.start()
   }
 
   // Check if user is currently authenticated, by confirming with the server.
@@ -97,6 +95,10 @@ class WebApp {
       if (res.status !== 200) { throw new Error(`/api/auth returned ${res.status}`) }
 
       // If we get a 200 response, we can confirm that user is legit.
+      const resJson = await res.json()
+      this.userData = resJson.user
+      console.log('Logged-in User: ', this.userData)
+
       this.update()
 
     } catch (err) {
@@ -131,6 +133,7 @@ class WebApp {
     localStorage?.removeItem('userToken')
     this.userToken = undefined
     this.userChecked = true  // We've signed out the user, so we know for sure we DON'T have a user.
+    this.userData = undefined
 
     this.update()
   }
@@ -139,7 +142,10 @@ class WebApp {
   update () {
     console.log('update()')
 
-    // Update header
+    const okToContinue = this.doRedirectsIfNecessary()
+    if (!okToContinue) { return }
+
+    // Update header.
     const userToken = this.userToken
     const userInfo = decodeJWT(userToken)
     console.log('userInfo: ', userInfo)
@@ -162,94 +168,26 @@ class WebApp {
 
     }
 
-    this.debugGetUsers()
+    // Update page.
+    this.page?.update()
   }
 
-  async debugGetUsers () {
-    // Update debug information
-    const htmlDebug = $('#debug')
-    const htmlList = $create('ul')
-    htmlDebug.innerHTML = ''
-    htmlDebug.appendChild(htmlList)
+  // Redirect users to other pages, if necessary.
+  // Returns true if no redirects are performed, but to be honest, the
+  // window.location change should pretty much terminate the code execution. 
+  doRedirectsIfNecessary () {
 
-    const res = await fetch('/api/users')
-
-    if (res.status === 200) {
-      const resJson = await res.json()
-      const users = resJson.users || []
-      
-      users.forEach(user => {
-        const htmlLI = $create('li')
-        htmlLI.style.display = 'flex'
-        htmlLI.style.gap = '1em'
-
-        const htmlSpan1 = $create('span')
-        htmlSpan1.style.fontWeight = 'bold'
-        htmlSpan1.innerText = user.id
-
-        const htmlSpan2 = $create('span')
-        htmlSpan2.innerText = user.name
-
-        htmlLI.appendChild(htmlSpan1)
-        htmlLI.appendChild(htmlSpan2)
-        htmlList.appendChild(htmlLI)
-      })
-
-    } else {
-      console.error(res.status)
-    }
-  }
-
-  doSkyMapDebugControlsUpdate (event) {
-    event?.preventDefault()
-
-    function getVal (arg) {
-      return parseInt($(arg)?.value) || undefined
+    // If user is logged in but hasn't adopted a patch, redirect them to the
+    // adoption page. Limit this to certain pages only.
+    if (
+      this.userData?.patch_adopted === false
+      && ['index-page', 'sky-page'].includes(this.pageName)
+    ) {
+      window.location = '/view/adopt'
+      return false
     }
 
-    const [ curRa, curDec ] = this.skyMap.getRaDec()
-    const curRadius = this.skyMap.getFov()
-
-    const ra =  getVal('#sky-map-debug-controls input[name=ra]') ?? curRa
-    const dec = getVal('#sky-map-debug-controls input[name=dec]') ?? curDec
-    const radius = getVal('#sky-map-debug-controls input[name=radius]') ?? curRadius
-
-    $('#sky-map-debug-controls input[name=ra]').value = ra
-    $('#sky-map-debug-controls input[name=dec]').value = dec
-    $('#sky-map-debug-controls input[name=radius]').value = radius
-
-    console.log(ra, dec, radius)
-
-    this.skyMap?.gotoRaDec(ra, dec)
-    this.getSkyData(ra, dec, radius)
-  }
-
-  async getSkyData (ra, dec, radius) {
-    const htmlSkyData = $('#sky-data')
-
-    try {
-      htmlSkyData.innerHTML = '<li class="info message">Checking what\'s available in this patch of sky...</>'
-
-      const searchQuery = new URLSearchParams({ ra, dec, radius })
-      const res = await fetch(`/api/skydata?${searchQuery}`)
-      if (res.status !== 200) { throw new Error('Could not fetch data') }
-      const resJson = await res.json()
-      const data = resJson?.data || []
-
-      htmlSkyData.innerHTML = ``
-      data.forEach(item => {
-        const htmlLI = $create('li')
-        htmlLI.innerText = `Object: ${item.object}`
-        htmlSkyData.appendChild(htmlLI)
-      })
-      if (data.length === 0) {
-        htmlSkyData.innerHTML = `<li class="info message">Nothing has been found in this patch of sky</li>`
-      }
-
-    } catch (err) {
-      console.error(err)
-      htmlSkyData.innerHTML = `<li class="error message">ERROR: ${err}</li>`
-    }
+    return true
   }
 }
 

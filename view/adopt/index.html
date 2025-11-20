@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adopt-A-Sky</title>
+    <script type="module" src="/src/main.js"></script>
+
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <script>
+      function handleSignIn (response) {
+        const token = response.credential
+        window?.webapp?.onSignIn(token)
+      }
+    </script>
+    <!-- /Google Sign-In -->
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <h1>Adopt-A-Sky</h1>
+
+      <div class="spacer"></div>
+
+      <div
+        id="g_id_onload"
+        data-client_id="%VITE_GOOGLE_CLIENT_ID%"
+        data-context="signin"
+        data-ux_mode="popup"
+        data-callback="handleSignIn"
+        data-auto_prompt="false"
+      ></div>
+
+      <div
+        class="g_id_signin"
+        data-type="standard"
+        data-shape="pill"
+        data-theme="outline"
+        data-text="signin_with"
+        data-size="large"
+        data-logo_alignment="left"
+      ></div>
+
+      <div
+        id="user-details"
+        class="conditional"
+      ></div>
+
+      <button
+        id="signout-button"
+        class="conditional"
+      >Sign Out</button>
+
+    </header>
+    <!-- /Header -->
+
+    <!-- Content -->
+    <main class="adopt-page">
+      <h2>Adopt a Patch of Sky</h2>
+
+      <section
+        id="anonymous-section"
+        class="conditional"
+      >
+        <div class="message">
+          <h3>Not Logged In</h3>
+          <p>Please log in</p>
+        </div>
+      </section>
+
+      <section
+        id="adopted-section"
+        class="conditional"
+      >
+        <div class="message">
+          <h3>Already Adopted</h3>
+          <p>You've already adopted a patch of sky!</p>
+          <p><a href="/view/sky/">View it here</a></p>
+        </div>
+      </section>
+
+      <section
+        id="adoption-section"
+        class="conditional"
+      >
+        <h3>Let's find a patch of sky just for you!</h3>
+        <p>On planet Earth, coordinates are usually described with longitude and latitude.</p>
+        <p>Meanwhile, coordinates in the sky are described by Right Ascension and Declination.</p>
+
+        <form
+          id="adoption-form"
+          method="post"
+          action="#"
+        >
+          <span class="status"></span>
+
+          <span class="input">
+            <label for="ra">Right Ascension (RA, or α)</label>
+            <input
+              name="ra"
+              value="0.0"
+              type="number"
+              min="0"
+              max="360"
+              step="0.01"
+            />
+          </span>
+
+          <span class="input">
+            <label for="dec">Declination (dec, or δ)</label>
+            <input
+              name="dec"
+              value="0.0"
+              type="number"
+              min="-90.0"
+              max="90.0"
+              step="0.01"
+            />
+          </span>
+
+          <button type="submit">Adopt!</button>
+        </form>
+      </section>
+    </main>
+    <!-- /Content -->
+  </body>
+</html>

@@ -18,6 +18,10 @@ export default function defineUser (sequelize) {
         type: DataTypes.STRING,
         defaultValue: '',
       },
+      patch_adopted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
       patch_ra: {
         type: DataTypes.FLOAT,
         defaultValue: 0.0,

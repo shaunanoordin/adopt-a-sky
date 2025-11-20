@@ -57,10 +57,29 @@
     <!-- /Header -->
 
     <!-- Content -->
-    <main class="index-page">
-      <h2>Welcome to Adopt-A-Sky!</h2>
-      <p>This is a web app where users can 'adopt' patches of the southern sky.</p>
-      <p>We use data from the Vera C. Rubin Observatory.</p>
+    <main class="sky-page">
+      <div id="sky-map"></div>
+      <form id="sky-map-debug-controls">
+        <h2>Debug Zone: where should we point the telescope?</h2>
+        <label>
+          ra
+          <input type="text" name="ra" />
+        </label>
+        <label>
+          dec
+          <input type="text" name="dec" />
+        </label>
+        <label>
+          radius (fov)
+          <input type="text" disabled name="radius" />
+        </label>
+        <button>View</button>
+      </form>
+      <ul id="sky-data"></ul>
+      <div>
+        <h2>Debug Zone: who's registered on this app?</h2>
+        <div id="debug"></div>
+      </div>
     </main>
     <!-- /Content -->
   </body>
