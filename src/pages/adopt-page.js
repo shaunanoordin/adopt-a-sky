@@ -10,8 +10,11 @@ export default class AdoptPage {
   constructor (app) {
     this.app = app
 
+    this.posting = false
+
     // Bind functions and event handlers.
-    // TODO
+    this.doAdoption = this.doAdoption.bind(this)
+    $('#adoption-form').addEventListener('submit', this.doAdoption)
   }
 
   start () {}
@@ -51,5 +54,42 @@ export default class AdoptPage {
     }
 
     return true
+  }
+
+  async doAdoption (event) {
+    event.preventDefault?.()
+
+    if (this.posting) { return }
+    this.posting = true
+    $('#adoption-form button[type=submit]').disabled = true
+
+    try {
+
+      const ra = (parseFloat($('input[name="ra"]')?.value) || 0.0).toFixed(2)
+      const dec = (parseFloat($('input[name="dec"]')?.value) || 0.0).toFixed(2)
+
+      const userToken = this.app.userToken
+      const res = await fetch('/api/adopt', {
+        method: 'POST',
+        headers: {
+          'Authorization': userToken ? `Bearer ${userToken}` : undefined,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ra, dec })
+      })
+
+      if (res.status !== 200) { throw new Error(`/api/auth returned ${res.status}`) }
+
+      const resJson = await res.json()
+
+
+    } catch (err) {
+      console.error(err)
+
+
+    } finally {
+      this.posting = false
+      $('#adoption-form button[type=submit]').disabled = false
+    }
   }
 }

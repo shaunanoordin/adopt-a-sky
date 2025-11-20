@@ -6,12 +6,14 @@
   background: hsl(0, 0%, 98%);
   color: hsl(0, 0%, 20%);
 
-  --col-light-1: #f0f0f0;
-  --col-dark-1: #404040;
+  --col-light-1: hsl(0, 0%, 98%);
+  --col-mid-1: hsl(0, 0%, 60%);
+  --col-dark-1: hsl(0, 0%, 20%);
   --col-theme-1: hsl(210, 60%, 60%);
   --col-interactive-1: hsl(45, 80%, 60%);
   --col-interactive-2: hsl(45, 100%, 80%);
-  --col-interactive-2: hsl(45, 100%, 90%);
+  --col-interactive-3: hsl(45, 100%, 90%);
+  --col-uninteractive-1: hsl(240, 40%, 60%);
 }
 
 a {
@@ -62,7 +64,7 @@ h1 {
 }
 
 button {
-  background: #ffffff;
+  background: var(--col-light-1);
   border: 1px solid var(--col-interactive-1);
   color: var(--col-interactive-1);
   cursor: pointer;
@@ -77,6 +79,12 @@ button {
   &:active {
     border: 1px solid var(--col-interactive-3);
     color: var(--col-interactive-3);
+  }
+
+  &:disabled {
+    background: var(--col-mid-1);
+    color: var(--col-uninteractive-1);
+    border: 1px solid var(--col-uninteractive-1);
   }
 }
 
