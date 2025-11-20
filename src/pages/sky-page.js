@@ -79,7 +79,6 @@ export default class SkyPage {
         showSimbadPointerControl: true,
         showCooGrid: true
       })
-      console.log('+++ ra, dec', ra, dec)
       this.skyMap.gotoRaDec(ra, dec)
 
     } catch (err) {
