@@ -65,28 +65,38 @@
 
     <!-- Content -->
     <main class="sky-page">
-      <div id="sky-map"></div>
-      <form id="sky-map-debug-controls">
-        <h2>Debug Zone: where should we point the telescope?</h2>
-        <label>
-          ra
-          <input type="text" name="ra" />
-        </label>
-        <label>
-          dec
-          <input type="text" name="dec" />
-        </label>
-        <label>
-          radius (fov)
-          <input type="text" disabled name="radius" />
-        </label>
-        <button>View</button>
-      </form>
-      <ul id="sky-data"></ul>
-      <div>
-        <h2>Debug Zone: who's registered on this app?</h2>
-        <div id="debug"></div>
-      </div>
+      <h2>Your Adopted Patch of Sky</h2>
+
+      <section
+        id="anonymous-section"
+        class="conditional"
+      >
+        <div class="message">
+          <h3>Not Logged In</h3>
+          <p>Please log in</p>
+        </div>
+      </section>
+
+      <section
+        id="unadopted-section"
+        class="conditional"
+      >
+        <div class="message">
+          <h3>Haven't Adopted</h3>
+          <p>You haven't adopted a patch of sky yet.</p>
+          <p><a href="/view/adopt/">Start here</a></p>
+        </div>
+      </section>
+
+      <section
+        id="sky-section"
+        class="conditional"
+      >
+        <div id="sky-info">...</div>
+        <div id="sky-map"></div>
+        <ul id="sky-data"></ul>
+      </section>
+
     </main>
     <!-- /Content -->
   </body>
