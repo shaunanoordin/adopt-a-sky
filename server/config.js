@@ -13,4 +13,5 @@ export const config = {
   databasePassword: process.env.DATABASE_PASSWORD || '',
   googleClientId: process.env.GOOGLE_CLIENT_ID || '',
   googleAuthIssuer: 'https://accounts.google.com',
+  defaultRadius: 500,  // Arcseconds
 }

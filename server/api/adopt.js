@@ -10,6 +10,7 @@ Endpoing for checking user authentication.
 
 import connectDatabase from '../database/connectDatabase.js'
 import defineUser from '../database/defineUser.js'
+import config from '../config.js'
 
 export default async function api_adopt (clientRequest, serverResponse) {
   try {
@@ -44,6 +45,7 @@ export default async function api_adopt (clientRequest, serverResponse) {
           patch_adopted: true,
           patch_ra: ra,
           patch_dec: dec,
+          patch_radius: config.defaultRadius,
         })
         await user.save()
 
