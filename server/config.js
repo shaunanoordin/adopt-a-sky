@@ -5,7 +5,6 @@ dotenv.config()
 const DEFAULT_RADIUS_IN_ARCSECONDS = 500  // This is pretty arbitrary.
 
 export const config = {
-  origins: process.env.ORIGINS || 'https://localhost:3666;https://local.example.com:3666',
   port: process.env.PORT || 3666,
   lasairApiKey: process.env.LASAIR_API_KEY || '',
   lasairApiUrl: process.env.LASAIR_API_URL || 'https://lasair-ztf.lsst.ac.uk/api/',
@@ -15,5 +14,6 @@ export const config = {
   databasePassword: process.env.DATABASE_PASSWORD || '',
   googleClientId: process.env.GOOGLE_CLIENT_ID || '',
   googleAuthIssuer: 'https://accounts.google.com',
-  defaultRadiusInDegrees: DEFAULT_RADIUS_IN_ARCSECONDS / 3600, 
+  defaultRadiusInDegrees: DEFAULT_RADIUS_IN_ARCSECONDS / 3600,
+  maxResultsPerQuery: 10,
 }

@@ -101,7 +101,7 @@ export default class SkyPage {
       htmlSkyData.innerHTML = ``
       data.forEach(item => {
         const htmlLI = $create('li')
-        htmlLI.innerText = `Object: ${item.object}`
+        htmlLI.innerText = `Object: ${item.objectId}`
         htmlSkyData.appendChild(htmlLI)
       })
       if (data.length === 0) {
