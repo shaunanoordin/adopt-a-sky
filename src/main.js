@@ -187,6 +187,16 @@ class WebApp {
       return false
     }
 
+    // If user has logged in and has adopted a patch, redirect them to the
+    // sky page. Limit this to certain pages only.
+    if (
+      this.userData?.patch_adopted === true
+      && ['index-page'].includes(this.pageName)
+    ) {
+      window.location = '/view/sky'
+      return false
+    }
+
     return true
   }
 }
