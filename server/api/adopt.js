@@ -10,6 +10,7 @@ Endpoing for checking user authentication.
 
 import connectDatabase from '../database/connectDatabase.js'
 import defineUser from '../database/defineUser.js'
+import { config } from '../config.js'
 
 export default async function api_adopt (clientRequest, serverResponse) {
   try {
@@ -25,9 +26,10 @@ export default async function api_adopt (clientRequest, serverResponse) {
       let user = await User.findByPk(userId)
       if (!user) { throw new Error('User somehow does not exist in the database. This should be impossible.') }
 
-      const ra = parseFloat(clientRequest.body.ra).toFixed(4)
-      const dec = parseFloat(clientRequest.body.dec).toFixed(4)
+      const ra = parseFloat(clientRequest.body.ra)
+      const dec = parseFloat(clientRequest.body.dec)
       
+      // Sanity check
       if (isNaN(ra) || isNaN(dec)) { throw new Error('Invalid input') }
       if (!(0 <= ra && ra <= 360) || !(-90 <= dec && dec <= 90)) { throw new Error('Invalid input') }
 
@@ -44,6 +46,7 @@ export default async function api_adopt (clientRequest, serverResponse) {
           patch_adopted: true,
           patch_ra: ra,
           patch_dec: dec,
+          patch_radius: config.defaultRadiusInDegrees,
         })
         await user.save()
 

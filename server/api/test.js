@@ -21,7 +21,6 @@ export default async function api_test (clientRequest, serverResponse) {
           const sherlockResponse = await fetch(`${config.lasairApiUrl}sherlock/object/?objectId=${obj.object}&lite=true&token=${config.lasairApiKey}&format=json`)
           if (sherlockResponse.status !== 200) throw new Error(`Lasair Sherlock response error, status ${lasairResponse.status}`)
           const sherlockData = await sherlockResponse.json()
-          console.log('+'.repeat(40), '\n', sherlockData)
           classifications = sherlockData?.classifications || {}
 
         } catch (err) {

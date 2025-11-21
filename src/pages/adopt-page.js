@@ -68,8 +68,8 @@ export default class AdoptPage {
 
     try {
 
-      const ra = (parseFloat($('input[name="ra"]')?.value) || 0.0).toFixed(4)
-      const dec = (parseFloat($('input[name="dec"]')?.value) || 0.0).toFixed(4)
+      const ra = parseFloat($('input[name="ra"]')?.value) || 0.0
+      const dec = parseFloat($('input[name="dec"]')?.value) || 0.0
 
       const userToken = this.app.userToken
       const res = await fetch('/api/adopt', {
