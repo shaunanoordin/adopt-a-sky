@@ -71,14 +71,20 @@ export default class SkyPage {
       $('#sky-map').style.width = '100%'
       $('#sky-map').style.height = '400px'
 
+      // Prepare the sky map!
       this.skyMap = Aladin.aladin('#sky-map', {
-        fov: radiusInDegrees,
-        projection: 'AIT',
-        cooFrame: 'equatorial',
+        // Main config
+        fov: radiusInDegrees,  // Field of view
+        // survey: 'CDS/P/Rubin/FirstLook',  // Visualisation data. If blank, this defaults to 'P/DSS2/color'
+
+        // Misc controls
         showCooGridControl: true,
-        showSimbadPointerControl: true,
-        showCooGrid: true
+        showGoToControl: false,
+        showProjectionControl: false,
+        showReticle: false,
       })
+
+      // Go to the coordinates of the adopted patch of sky
       this.skyMap.gotoRaDec(ra, dec)
 
     } catch (err) {
