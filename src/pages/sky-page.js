@@ -18,9 +18,6 @@ export default class SkyPage {
   }
 
   update () {
-    // const okToContinue = this.doRedirectsIfNecessary()
-    // if (!okToContinue) { return }
-
     // Reset
     $('#anonymous-section').style.display = 'none'
     $('#unadopted-section').style.display = 'none'
@@ -43,23 +40,6 @@ export default class SkyPage {
     } = this.app.userData
     this.startSkyMap(patch_ra, patch_dec, patch_radius)
     this.getSkyData(patch_ra, patch_dec, patch_radius)
-  }
-
-  // Redirect users to other pages, if necessary.
-  // Returns true if no redirects are performed, but to be honest, the
-  // window.location change should pretty much terminate the code execution. 
-  doRedirectsIfNecessary () {
-
-    // If user is logged in and HAS adopted a patch, redirect them to the
-    // sky page
-    if (
-      this.app.userData?.patch_adopted === true
-    ) {
-      window.location = '/view/sky'
-      return false
-    }
-
-    return true
   }
 
   startSkyMap (ra, dec, radiusInDegrees) {

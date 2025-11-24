@@ -73,7 +73,16 @@
       >
         <div class="message">
           <h3>Not Logged In</h3>
-          <p>Please log in</p>
+          <p>You'll need to login to access the web app.</p>
+          <div
+            class="g_id_signin"
+            data-type="standard"
+            data-shape="pill"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="large"
+            data-logo_alignment="left"
+          ></div>
         </div>
       </section>
 
@@ -82,9 +91,14 @@
         class="conditional"
       >
         <div class="message">
-          <h3>Haven't Adopted</h3>
+          <h3>No Adopted Patch</h3>
           <p>You haven't adopted a patch of sky yet.</p>
-          <p><a href="/view/adopt/">Start here</a></p>
+          <a
+            class="button"
+            href="/view/adopt/"
+          >
+            Start Adopting
+          </a>
         </div>
       </section>
 
@@ -92,7 +106,7 @@
         id="sky-section"
         class="conditional"
       >
-        <div id="sky-info">...</div>
+        <div id="sky-info">Here's your patch of sky!</div>
         <div id="sky-map"></div>
         <ul id="sky-data"></ul>
       </section>
