@@ -22,6 +22,7 @@ export default class SkyPage {
     $('#anonymous-section').style.display = 'none'
     $('#unadopted-section').style.display = 'none'
     $('#sky-section').style.display = 'none'
+    if (!this.app.userChecked) { return }
 
     if (!this.app.userData) {
       $('#anonymous-section').style.display = 'block'

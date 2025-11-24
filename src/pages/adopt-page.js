@@ -26,6 +26,7 @@ export default class AdoptPage {
     $('#anonymous-section').style.display = 'none'
     $('#adopted-section').style.display = 'none'
     $('#adoption-section').style.display = 'none'
+    if (!this.app.userChecked) { return }
 
     if (!this.app.userData) {
       $('#anonymous-section').style.display = 'block'
