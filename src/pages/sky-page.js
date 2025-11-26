@@ -78,7 +78,8 @@ export default class SkyPage {
     const htmlSkyData = $('#sky-data')
 
     try {
-      htmlSkyData.innerHTML = '<li class="info message">Checking what\'s available in this patch of sky...</>'
+      this.setDataStatus('fetching')
+      htmlSkyData.innerHTML = ''
 
       const searchQuery = new URLSearchParams({ ra, dec, radiusInDegrees })
       const res = await fetch(`/api/skydata?${searchQuery}`)
@@ -86,19 +87,47 @@ export default class SkyPage {
       const resJson = await res.json()
       const data = resJson?.data || []
 
-      htmlSkyData.innerHTML = ``
       data.forEach(item => {
         const htmlLI = $create('li')
         htmlLI.innerText = `Object: ${item.objectId}`
         htmlSkyData.appendChild(htmlLI)
       })
+
       if (data.length === 0) {
-        htmlSkyData.innerHTML = `<li class="info message">Nothing has been found in this patch of sky</li>`
+        this.setDataStatus('no-data')
+      } else {
+        this.setDataStatus('success')
       }
 
     } catch (err) {
       console.error(err)
-      htmlSkyData.innerHTML = `<li class="error message">ERROR: ${err}</li>`
+      this.setDataStatus('error', err)
+      htmlSkyData.innerHTML = ``
+    }
+  }
+
+  setDataStatus (status = '', message = '') {
+    const htmlDataStatus = $('#sky-data-status')
+    htmlDataStatus.innerText = ''
+    htmlDataStatus.className = 'data-status'
+
+    switch (status) {
+      case 'fetching':
+        htmlDataStatus.innerText = 'Checking what\'s available in this patch of the sky...'
+        htmlDataStatus.className = 'data-status status-fetching'
+        break
+      case 'success':
+        htmlDataStatus.innerText = 'Here\'s what\'s been found!'
+        htmlDataStatus.className = 'data-status status-success'
+        break
+      case 'no-data':
+        htmlDataStatus.innerText = 'Sorry, nothing has been found in this patch of sky, for the given time span. Try changing the time span.'
+        htmlDataStatus.className = 'data-status status-no-data'
+        break
+      case 'error':
+        htmlDataStatus.innerText = `ERROR: ${message}`
+        htmlDataStatus.className = 'data-status status-error'
+        break
     }
   }
 }
