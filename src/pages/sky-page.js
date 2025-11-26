@@ -41,6 +41,7 @@ export default class SkyPage {
     } = this.app.userData
     this.startSkyMap(patch_ra, patch_dec, patch_radius)
     this.getSkyData(patch_ra, patch_dec, patch_radius)
+    $('#sky-info').innerHTML = `<p>Your patch of sky is centred around the coordinates RA = <b>${patch_ra?.toFixed?.(4)}&deg;</b> dec = <b>${patch_dec?.toFixed?.(4)}&deg</b>, with a radius of <b>${(patch_radius * 3600)?.toFixed(0)} arcseconds</b>.</p>`
   }
 
   startSkyMap (ra, dec, radiusInDegrees) {

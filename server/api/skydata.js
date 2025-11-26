@@ -30,7 +30,6 @@ export default async function api_skydata (clientRequest, serverResponse) {
     const queryLimit = config.maxResultsPerQuery
 
     // Fetch data from Lasair's "Query" API.
-    console.log('++++++\n', `${config.lasairApiUrl}query/?selected=${querySelect}&tables=${queryTables}&conditions=${queryWhere}&limit=${queryLimit}&token=${config.lasairApiKey}&format=json`)
     const lasairResponse = await fetch(`${config.lasairApiUrl}query/?selected=${querySelect}&tables=${queryTables}&conditions=${queryWhere}&limit=${queryLimit}&token=${config.lasairApiKey}&format=json`)
     if (lasairResponse.status !== 200) throw new Error(`Lasair response error, status ${lasairResponse.status}`)
     const data = await lasairResponse.json()
