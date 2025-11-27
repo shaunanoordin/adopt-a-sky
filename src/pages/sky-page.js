@@ -88,9 +88,24 @@ export default class SkyPage {
       const data = resJson?.data || []
 
       data.forEach(item => {
-        const htmlLI = $create('li')
+        const htmlLI = $create('li.datacard', htmlSkyData)
+        htmlLI.className = 'datacard'
         htmlLI.innerText = `Object: ${item.objectId}`
-        htmlSkyData.appendChild(htmlLI)
+
+        const htmlTitle = $create('h4.datacard-title', htmlLI)
+        htmlTitle.innerText = item.objectId
+
+        const htmlArt = $create('div.datacard-art', htmlLI)
+
+        const htmlType = $create('div.datacard-type', htmlLI)
+        htmlType.innerText = item.sherlock
+
+        // WARNING: DANGER ZONE
+        const htmlBody = $create('div.datacard-body', htmlLI)
+        htmlBody.innerHTML = `
+          <p>This was found <b>${item.days_ago.toFixed(0)} days ago</b> at coordinates <b>RA=${item.ramean.toFixed(4)}</b> and <b>dec=${item.decmean.toFixed(4)}</b></p>
+          <p>${item.description}</p>
+        `
       })
 
       if (data.length === 0) {
