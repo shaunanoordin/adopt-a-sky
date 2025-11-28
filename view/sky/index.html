@@ -108,6 +108,19 @@
       >
         <div id="sky-info">Here's your patch of sky!</div>
         <div id="sky-map"></div>
+        <form id="sky-controls">
+          <span>Looking for objects &amp; events of interest that were found</span>
+          <label>
+            from
+            <input name="minDaysAgo" type="number" min="0" value="0" />
+          </label>
+          <label>
+            to
+            <input name="maxDaysAgo" type="number" min="0" value="360" />
+          </label>
+          <span>days ago</span>
+          <button id="sky-controls-update">Refresh</button>
+        </form>
         <div id="sky-data-status" class="data-status"></div>
         <ul id="sky-data"></ul>
       </section>
