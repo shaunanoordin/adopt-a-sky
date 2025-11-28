@@ -9,7 +9,7 @@ export default async function api_skydata (clientRequest, serverResponse) {
       ? parseFloat(clientRequest.query.radius)
       : config.defaultRadiusInDegrees
     let minDaysAgo = (clientRequest.query.minDaysAgo !== undefined) ? parseInt(clientRequest.query.minDaysAgo) : 0 
-    let maxDaysAgo = (clientRequest.query.maxDaysAgo !== undefined) ? parseInt(clientRequest.query.minDaysAgo) : 365
+    let maxDaysAgo = (clientRequest.query.maxDaysAgo !== undefined) ? parseInt(clientRequest.query.maxDaysAgo) : 365
     
     // Arbitrary input
     const minimumLightCurveDetection = 5

@@ -24,10 +24,20 @@ export default class SkyPage {
 
   skyControls_onSubmit (event) {
     event?.preventDefault()
+
+    // Get data!
+    const {
+      patch_ra,
+      patch_dec,
+      patch_radius
+    } = this.app.userData
+    const minDaysAgo = parseInt($('#sky-controls input[name=minDaysAgo]').value)
+    const maxDaysAgo = parseInt($('#sky-controls input[name=maxDaysAgo]').value)
+    
+    this.getSkyData(patch_ra, patch_dec, patch_radius, minDaysAgo, maxDaysAgo)
   }
 
   skyControlsInput_onChange (event) {
-    console.log('+++ event.target', event.target)
     const SMALLEST_PERIOD = 7
     const name = event?.target.name
     let value = parseInt(event?.target.value) || 0
@@ -74,13 +84,18 @@ export default class SkyPage {
 
     $('#sky-section').style.display = 'block'
 
+    // Get data!
     const {
       patch_ra,
       patch_dec,
       patch_radius
     } = this.app.userData
+    const minDaysAgo = parseInt($('#sky-controls input[name=minDaysAgo]').value)
+    const maxDaysAgo = parseInt($('#sky-controls input[name=maxDaysAgo]').value)
     this.startSkyMap(patch_ra, patch_dec, patch_radius)
-    this.getSkyData(patch_ra, patch_dec, patch_radius)
+    this.getSkyData(patch_ra, patch_dec, patch_radius, minDaysAgo, maxDaysAgo)
+
+    // Update info section.
     $('#sky-info').innerHTML = `<p>Your patch of sky is centred around the coordinates RA = <b>${patch_ra?.toFixed?.(4)}&deg;</b> dec = <b>${patch_dec?.toFixed?.(4)}&deg</b>, with a radius of <b>${(patch_radius * 3600)?.toFixed(0)} arcseconds</b>.</p>`
   }
 
@@ -114,14 +129,14 @@ export default class SkyPage {
     }
   }
 
-  async getSkyData (ra, dec, radiusInDegrees) {
+  async getSkyData (ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo) {
     const htmlSkyData = $('#sky-data')
 
     try {
       this.setDataStatus('fetching')
       htmlSkyData.innerHTML = ''
 
-      const searchQuery = new URLSearchParams({ ra, dec, radiusInDegrees })
+      const searchQuery = new URLSearchParams({ ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo })
       const res = await fetch(`/api/skydata?${searchQuery}`)
       if (res.status !== 200) { throw new Error('Could not fetch data') }
       const resJson = await res.json()
