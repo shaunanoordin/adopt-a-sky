@@ -8,6 +8,8 @@ import Aladin from 'aladin-lite'
 import { $, $create } from '../util/html.js'
 import { SHERLOCK_TYPES } from '../util/sherlockTypes.js'
 
+const MAX_RESULTS_PER_QUERY = 10
+
 export default class SkyPage {
   constructor (app) {
     this.app = app
@@ -165,7 +167,7 @@ export default class SkyPage {
       if (data.length === 0) {
         this.setDataStatus('no-data')
       } else {
-        this.setDataStatus('success')
+        this.setDataStatus('success', '', { count: data.length })
       }
 
     } catch (err) {
@@ -175,7 +177,7 @@ export default class SkyPage {
     }
   }
 
-  setDataStatus (status = '', message = '') {
+  setDataStatus (status = '', message = '', args = {}) {
     const htmlDataStatus = $('#sky-data-status')
     htmlDataStatus.innerText = ''
     htmlDataStatus.className = 'data-status'
@@ -186,7 +188,10 @@ export default class SkyPage {
         htmlDataStatus.className = 'data-status status-fetching'
         break
       case 'success':
-        htmlDataStatus.innerText = 'Here\'s what\'s been found!'
+        const extraMessage = (args?.count >= MAX_RESULTS_PER_QUERY)
+          ? `(Due to the amount of data, we can only show ${MAX_RESULTS_PER_QUERY} items at a time, and they're not displayed in any particular order. You could narrow your time span to possibly find more results.)`
+          : ''
+        htmlDataStatus.innerText = `Here\'s what we found! ${extraMessage}`
         htmlDataStatus.className = 'data-status status-success'
         break
       case 'no-data':
