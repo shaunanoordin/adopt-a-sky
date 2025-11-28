@@ -6,6 +6,7 @@ Only valid if user is logged in, and has adopted a patch of sky.
 
 import Aladin from 'aladin-lite'
 import { $, $create } from '../util/html.js'
+import { SHERLOCK_TYPES } from '../util/sherlockTypes.js'
 
 export default class SkyPage {
   constructor (app) {
@@ -90,15 +91,14 @@ export default class SkyPage {
       data.forEach(item => {
         const htmlLI = $create('li.datacard', htmlSkyData)
         htmlLI.className = 'datacard'
-        htmlLI.innerText = `Object: ${item.objectId}`
-
+        
         const htmlTitle = $create('h4.datacard-title', htmlLI)
         htmlTitle.innerText = item.objectId
 
         const htmlArt = $create('div.datacard-art', htmlLI)
 
         const htmlType = $create('div.datacard-type', htmlLI)
-        htmlType.innerText = item.sherlock
+        htmlType.innerText = SHERLOCK_TYPES[item.sherlock] ? `${item.sherlock} - ${SHERLOCK_TYPES[item.sherlock]}` : SHERLOCK_TYPES['']
 
         // WARNING: DANGER ZONE
         const htmlBody = $create('div.datacard-body', htmlLI)
