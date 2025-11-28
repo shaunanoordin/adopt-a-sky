@@ -40,7 +40,7 @@ export default class AdoptPage {
   }
 
   async doAdoption (event) {
-    event.preventDefault?.()
+    event?.preventDefault()
 
     if (this.posting) { return }
     this.posting = true

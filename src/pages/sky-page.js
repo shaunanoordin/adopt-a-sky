@@ -12,6 +12,45 @@ export default class SkyPage {
   constructor (app) {
     this.app = app
     this.skyMap = null
+
+    // Bind functions and event handlers.
+    this.skyControls_onSubmit = this.skyControls_onSubmit.bind(this)
+    $('#sky-controls').addEventListener('submit', this.skyControls_onSubmit)
+
+    this.skyControlsInput_onChange = this.skyControlsInput_onChange.bind(this)
+    $('#sky-controls input[name=minDaysAgo]').addEventListener('change', this.skyControlsInput_onChange)
+    $('#sky-controls input[name=maxDaysAgo]').addEventListener('change', this.skyControlsInput_onChange)
+  }
+
+  skyControls_onSubmit (event) {
+    event?.preventDefault()
+  }
+
+  skyControlsInput_onChange (event) {
+    console.log('+++ event.target', event.target)
+    const SMALLEST_PERIOD = 7
+    const name = event?.target.name
+    let value = parseInt(event?.target.value) || 0
+    value = Math.max(value, 0)
+    
+    const htmlMinDaysAgo = $('#sky-controls input[name=minDaysAgo]')
+    const htmlMaxDaysAgo = $('#sky-controls input[name=maxDaysAgo]')
+
+    switch (name) {
+      case 'minDaysAgo':
+        const maxDaysAgo = parseInt(htmlMaxDaysAgo.value) || 0
+        htmlMinDaysAgo.value = value
+        htmlMaxDaysAgo.value = Math.max(maxDaysAgo, value + SMALLEST_PERIOD)
+        break
+      
+      case 'maxDaysAgo':
+        value = Math.max(value, SMALLEST_PERIOD)
+        const minDaysAgo = parseInt(htmlMinDaysAgo.value) || 0
+        htmlMinDaysAgo.value = Math.min(minDaysAgo, value - SMALLEST_PERIOD)
+        htmlMaxDaysAgo.value = value
+        break
+    }
+
   }
 
   start () {
