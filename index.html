@@ -68,6 +68,57 @@
       <h2>Welcome to Adopt-A-Sky!</h2>
       <p>This is a web app where users can 'adopt' patches of the southern sky.</p>
       <p>We use data from the Vera C. Rubin Observatory.</p>
+
+      <section
+        id="anonymous-section"
+        class="conditional"
+      >
+        <div class="message">
+          <h3>Let's get started!</h3>
+          <p>You'll need to login to access the web app.</p>
+          <div
+            class="g_id_signin"
+            data-type="standard"
+            data-shape="pill"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="large"
+            data-logo_alignment="left"
+          ></div>
+        </div>
+      </section>
+
+      <section
+        id="unadopted-section"
+        class="conditional"
+      >
+        <div class="message">
+          <h3>Let's adopt!</h3>
+          <p>Thanks for logging in! Let's start by finding you a patch of sky to call your own.</p>
+          <a
+            class="button"
+            href="/view/adopt/"
+          >
+            Start Adopting
+          </a>
+        </div>
+      </section>
+
+      <section
+        id="adopted-section"
+        class="conditional"
+      >
+        <div class="message">
+          <h3>Let's take a look!</h3>
+          <p>You've adopted a patch of sky, so let's take a look at it.</p>
+          <a
+            class="button"
+            href="/view/sky/"
+          >
+            View Patch
+          </a>
+        </div>
+      </section>
     </main>
     <!-- /Content -->
   </body>

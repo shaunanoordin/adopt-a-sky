@@ -2,6 +2,7 @@ import './style.css'
 import { $ } from './util/html.js'
 import decodeJWT from './util/decodeJWT.js'
 
+import IndexPage from './pages/index-page.js'
 import AdoptPage from './pages/adopt-page.js'
 import DebugPage from './pages/debug-page.js'
 import SkyPage from './pages/sky-page.js'
@@ -47,6 +48,9 @@ class WebApp {
     // Select current page
     this.pageName = $('main')?.className
     switch (this.pageName) {
+      case 'index-page':
+        this.page = new IndexPage(this)
+        break
       case 'adopt-page':
         this.page = new AdoptPage(this)
         break
@@ -142,9 +146,6 @@ class WebApp {
   update () {
     console.log('update()')
 
-    const okToContinue = this.doRedirectsIfNecessary()
-    if (!okToContinue) { return }
-
     // Update header.
     const userToken = this.userToken
     const userInfo = decodeJWT(userToken)
@@ -170,34 +171,6 @@ class WebApp {
 
     // Update page.
     this.page?.update()
-  }
-
-  // Redirect users to other pages, if necessary.
-  // Returns true if no redirects are performed, but to be honest, the
-  // window.location change should pretty much terminate the code execution. 
-  doRedirectsIfNecessary () {
-
-    // If user is logged in but hasn't adopted a patch, redirect them to the
-    // adoption page. Limit this to certain pages only.
-    if (
-      this.userData?.patch_adopted === false
-      && ['index-page', 'sky-page'].includes(this.pageName)
-    ) {
-      window.location = '/view/adopt'
-      return false
-    }
-
-    // If user has logged in and has adopted a patch, redirect them to the
-    // sky page. Limit this to certain pages only.
-    if (
-      this.userData?.patch_adopted === true
-      && ['index-page'].includes(this.pageName)
-    ) {
-      window.location = '/view/sky'
-      return false
-    }
-
-    return true
   }
 }
 

@@ -8,15 +8,16 @@ export default async function api_skydata (clientRequest, serverResponse) {
     let radiusInDegrees = (parseFloat(clientRequest.query.radius))
       ? parseFloat(clientRequest.query.radius)
       : config.defaultRadiusInDegrees
+    let minDaysAgo = (clientRequest.query.minDaysAgo !== undefined) ? parseInt(clientRequest.query.minDaysAgo) : 0 
+    let maxDaysAgo = (clientRequest.query.maxDaysAgo !== undefined) ? parseInt(clientRequest.query.maxDaysAgo) : 365
     
     // Arbitrary input
-    let minDaysAgo = 0
-    let maxDaysAgo = 3650
     const minimumLightCurveDetection = 5
 
     // Sanity check
     if (isNaN(ra) || isNaN(dec)) { throw new Error('Invalid input') }
     if (!(0 <= ra && ra <= 360) || !(-90 <= dec && dec <= 90)) { throw new Error('Invalid input') }
+    if (isNaN(minDaysAgo) || isNaN(maxDaysAgo)) { throw new Error('Invalid input') }
     if (!(0 < radiusInDegrees <= 1)) { throw new Error('Invalid input') }  // This limit is arbitrary, we just don't want to scan the whole sky
 
     // Prepare to construct the query.
@@ -30,7 +31,6 @@ export default async function api_skydata (clientRequest, serverResponse) {
     const queryLimit = config.maxResultsPerQuery
 
     // Fetch data from Lasair's "Query" API.
-    console.log('++++++\n', `${config.lasairApiUrl}query/?selected=${querySelect}&tables=${queryTables}&conditions=${queryWhere}&limit=${queryLimit}&token=${config.lasairApiKey}&format=json`)
     const lasairResponse = await fetch(`${config.lasairApiUrl}query/?selected=${querySelect}&tables=${queryTables}&conditions=${queryWhere}&limit=${queryLimit}&token=${config.lasairApiKey}&format=json`)
     if (lasairResponse.status !== 200) throw new Error(`Lasair response error, status ${lasairResponse.status}`)
     const data = await lasairResponse.json()

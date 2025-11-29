@@ -73,7 +73,16 @@
       >
         <div class="message">
           <h3>Not Logged In</h3>
-          <p>Please log in</p>
+          <p>You'll need to login to access the web app.</p>
+          <div
+            class="g_id_signin"
+            data-type="standard"
+            data-shape="pill"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="large"
+            data-logo_alignment="left"
+          ></div>
         </div>
       </section>
 
@@ -82,9 +91,14 @@
         class="conditional"
       >
         <div class="message">
-          <h3>Haven't Adopted</h3>
+          <h3>No Adopted Patch</h3>
           <p>You haven't adopted a patch of sky yet.</p>
-          <p><a href="/view/adopt/">Start here</a></p>
+          <a
+            class="button"
+            href="/view/adopt/"
+          >
+            Start Adopting
+          </a>
         </div>
       </section>
 
@@ -92,8 +106,22 @@
         id="sky-section"
         class="conditional"
       >
-        <div id="sky-info">...</div>
+        <div id="sky-info">Here's your patch of sky!</div>
         <div id="sky-map"></div>
+        <form id="sky-controls">
+          <span>Looking for objects &amp; events of interest that were found</span>
+          <label>
+            from
+            <input name="minDaysAgo" type="number" min="0" value="0" />
+          </label>
+          <label>
+            to
+            <input name="maxDaysAgo" type="number" min="0" value="365" />
+          </label>
+          <span>days ago</span>
+          <button id="sky-controls-update">Refresh</button>
+        </form>
+        <div id="sky-data-status" class="data-status"></div>
         <ul id="sky-data"></ul>
       </section>
 

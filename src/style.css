@@ -7,18 +7,22 @@
   color: hsl(0, 0%, 20%);
 
   --col-light-1: hsl(0, 0%, 98%);
+  --col-light-2: hsl(0, 0%, 100%);
   --col-mid-1: hsl(0, 0%, 60%);
   --col-dark-1: hsl(0, 0%, 20%);
   --col-theme-1: hsl(210, 60%, 60%);
   --col-interactive-1: hsl(45, 80%, 60%);
   --col-interactive-2: hsl(45, 100%, 80%);
   --col-interactive-3: hsl(45, 100%, 90%);
+  --col-interactive-4: hsl(45, 100%, 50%);
   --col-uninteractive-1: hsl(240, 40%, 60%);
+  --col-accent-1: hsl(150, 40%, 80%);
+  --col-error: hsl(15, 100%, 50%);
 }
 
 a {
   font-weight: 500;
-  color: var(--col-interactive-1);
+  color: var(--col-interactive-4);
   text-decoration: inherit;
 }
 a:hover {
@@ -63,13 +67,13 @@ h1 {
   margin: 0;
 }
 
-button {
-  background: var(--col-light-1);
+button, .button {
+  background: var(--col-light-2);
   border: 1px solid var(--col-interactive-1);
-  color: var(--col-interactive-1);
+  color: var(--col-interactive-4);
   cursor: pointer;
   border-radius: 0.5em;
-  padding: 0.5em;
+  padding: 0.5em 1em;
 
   &:hover, &:focus {
     border: 1px solid var(--col-interactive-2);
@@ -101,8 +105,19 @@ button {
   border: 2px solid var(--col-theme-1);
   border-radius: 1em;
   margin: 1em auto;
-  max-width: 400px;
+  max-width: 600px;
   padding: 1em;
+
+  h3 {
+    margin: 0;
+  }
+
+  .button {
+    border-radius: 0.5em;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+  }
 }
 
 .adopt-page {
@@ -132,5 +147,112 @@ button {
       }
     }
 
+  }
+}
+
+.sky-page {
+
+  #sky-controls {
+    padding: 0.5em 1em;
+    margin: 0.5em 0;
+
+    border-radius: 0.5em;
+    border: 1px solid var(--col-accent-1);
+    line-height: 1.25em;
+    text-align: center;
+
+    label {
+      font-weight: 600;
+    }
+
+    input {
+      border-radius: 0.25em;
+      border: 1px solid var(--col-interactive-1); 
+      padding: 0.25em;
+      text-align: center;
+      width: 5em;
+    }
+  }
+
+  #sky-data {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    margin: 0.5em 0;
+    overflow: auto;
+    padding: 1.5em;
+
+    border: 4px solid var(--col-accent-1);
+    border-radius: 0.5em;
+    box-shadow: inset 0 0 10px var(--col-mid-1);
+    list-style: none;
+
+    li {
+      flex: 0 0 300px;
+      margin: 0;
+    }
+  }
+
+  .data-status {
+    padding: 0.5em 1em;
+    margin: 0.5em 0;
+
+    border-radius: 0.5em;
+    background: var(--col-accent-1);
+    color: var(--col-light-1);
+    text-align: center;
+
+    .status-error {
+      color: var(--col-error);
+    }
+  }
+}
+
+.datacard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  height: 500px;
+  max-width: 300px;
+  padding: 0.5em;
+  
+  background: var(--col-mid-1);
+  border: 0.5px solid var(--col-dark-1);
+  border-radius: 0.5em;  
+
+  .datacard-title {
+    flex: 0 0 auto;
+    padding: 0.25em;
+    margin: 0;
+
+    background: var(--col-light-1);
+    color: var(--col-dark-1);
+    font-size: 1.25em;
+    font-weight: bold;
+  }
+
+  .datacard-art {
+    background: var(--col-light-1);
+
+    flex: 0 0 150px;
+    width: 100%;
+  }
+
+  .datacard-type {
+    flex: 0 0 auto;
+    padding: 0.25em;
+
+    background: var(--col-light-1);
+    color: var(--col-dark-1);
+    font-weight: bold;
+  }
+
+  .datacard-body {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding: 0.25em;
+    
+    background: var(--col-light-1);
+    color: var(--col-dark-1);
   }
 }
