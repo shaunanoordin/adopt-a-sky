@@ -14,6 +14,7 @@ export default class SkyPage {
   constructor (app) {
     this.app = app
     this.skyMap = null
+    this.skyDataStatus = 'ready'
 
     // Bind functions and event handlers.
     this.skyControls_onSubmit = this.skyControls_onSubmit.bind(this)
@@ -138,6 +139,13 @@ export default class SkyPage {
   async getSkyData (ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo) {
     const htmlSkyData = $('#sky-data')
 
+    if (this.skyDataStatus === 'fetching') {
+      const htmlDataStatus = $('#sky-data-status')
+      htmlDataStatus.innerText = 'Please wait, we\'re still checking.'
+      htmlDataStatus.className = 'data-status status-busy'
+      return
+    }
+
     try {
       this.setDataStatus('fetching')
       htmlSkyData.innerHTML = ''
@@ -185,6 +193,8 @@ export default class SkyPage {
     const htmlDataStatus = $('#sky-data-status')
     htmlDataStatus.innerText = ''
     htmlDataStatus.className = 'data-status'
+
+    this.skyDataStatus = status
 
     switch (status) {
       case 'fetching':
