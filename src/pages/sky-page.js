@@ -37,6 +37,10 @@ export default class SkyPage {
     const maxDaysAgo = parseInt($('#sky-controls input[name=maxDaysAgo]').value)
     
     this.getSkyData(patch_ra, patch_dec, patch_radius, minDaysAgo, maxDaysAgo)
+
+    // Recentre sky map
+    this.skyMap.gotoRaDec(patch_ra, patch_dec)
+    this.skyMap.setFoV(patch_radius)
   }
 
   skyControlsInput_onChange (event) {
