@@ -107,17 +107,19 @@
         class="conditional"
       >
         <h3>Let's find a patch of sky just for you!</h3>
-        <p>On planet Earth, coordinates are usually described with longitude and latitude.</p>
-        <p>Meanwhile, coordinates in the sky are described by Right Ascension and Declination.</p>
 
         <form
           id="adoption-form"
           method="post"
           action="#"
         >
-          <span class="status"></span>
+          <p>On planet Earth, coordinates are usually described with longitude and latitude.</p>
+          <p>Meanwhile, coordinates in the sky are described by Right Ascension and Declination.</p>
+          <p>Here are the coordinates of your patch!</p>
 
-          <span class="input">
+          <div class="data-status"></div>
+
+          <div class="input">
             <label for="ra">Right Ascension (RA, or α)</label>
             <input
               name="ra"
@@ -127,9 +129,9 @@
               max="360"
               step="0.01"
             />
-          </span>
+          </div>
 
-          <span class="input">
+          <div class="input">
             <label for="dec">Declination (dec, or δ)</label>
             <input
               name="dec"
@@ -139,7 +141,7 @@
               max="90.0"
               step="0.01"
             />
-          </span>
+          </div>
 
           <button type="submit">Adopt!</button>
         </form>

@@ -17,6 +17,7 @@
   --col-interactive-4: hsl(45, 100%, 50%);
   --col-uninteractive-1: hsl(240, 40%, 60%);
   --col-accent-1: hsl(150, 40%, 80%);
+  --col-accent-2: hsl(60, 40%, 90%);
   --col-error: hsl(15, 100%, 50%);
 }
 
@@ -68,27 +69,29 @@ h1 {
 }
 
 button, .button {
+  padding: 0.5em 1em;
+  
   background: var(--col-light-2);
-  border: 1px solid var(--col-interactive-1);
+  border: 2px solid var(--col-interactive-1);
+  border-radius: 0.5em;
   color: var(--col-interactive-4);
   cursor: pointer;
-  border-radius: 0.5em;
-  padding: 0.5em 1em;
-
+  font-weight: bold;
+  
   &:hover, &:focus {
-    border: 1px solid var(--col-interactive-2);
+    border: 2px solid var(--col-interactive-2);
     color: var(--col-interactive-2);
   }
 
   &:active {
-    border: 1px solid var(--col-interactive-3);
+    border: 2px solid var(--col-interactive-3);
     color: var(--col-interactive-3);
   }
 
   &:disabled {
     background: var(--col-mid-1);
+    border: 2px solid var(--col-uninteractive-1);
     color: var(--col-uninteractive-1);
-    border: 1px solid var(--col-uninteractive-1);
   }
 }
 
@@ -123,28 +126,41 @@ button, .button {
 .adopt-page {
 
   #adoption-form {
+    max-width: 600px;
+    margin: 1em auto;
+    padding: 1em;
 
-    .status {
-      display: block;
-      margin: 1em 0;
-    }
+    border: 1px solid var(--col-accent-1);
+    border-radius: 1em;
 
     .input {
-      display: flex;
-      gap: 1em;
-      margin: 1em 0;
+      margin: 1em auto;
+      max-width: 400px;
+      width: 100%;
 
       label {
-        flex: 0 0 50%;
-      }
-
-      label {
-        flex: 0 0 auto;
+        display: block;
+        font-weight: bold;
       }
 
       input {
-        flex: 1 1 auto;
+        display: block;
+        padding: 0.5em 2em 0.5em 0.5em;
+        width: 100%;
+
+        background: var(--col-accent-2);
+        border: none;
+        border-radius: 0.5em;
+        color: var(--col-dark-1);
+        font-size: 1.5em;
+        text-align: right;
       }
+    }
+
+    [type=submit] {
+      display: block;
+      margin: 1em auto;
+      min-width: 50%;
     }
 
   }
@@ -192,19 +208,19 @@ button, .button {
       margin: 0;
     }
   }
+}
 
-  .data-status {
-    padding: 0.5em 1em;
-    margin: 0.5em 0;
+.data-status {
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
 
-    border-radius: 0.5em;
-    background: var(--col-accent-1);
-    color: var(--col-light-1);
-    text-align: center;
+  border-radius: 0.5em;
+  background: var(--col-accent-1);
+  color: var(--col-light-1);
+  text-align: center;
 
-    .status-error {
-      color: var(--col-error);
-    }
+  &.status-error {
+    color: var(--col-error);
   }
 }
 
