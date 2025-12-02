@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 :root {
   font-family: Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -130,7 +134,7 @@ button, .button {
     margin: 1em auto;
     padding: 1em;
 
-    border: 1px solid var(--col-accent-1);
+    border: 2px solid var(--col-theme-1);
     border-radius: 1em;
 
     .input {
@@ -145,7 +149,7 @@ button, .button {
 
       input {
         display: block;
-        padding: 0.5em 2em 0.5em 0.5em;
+        padding: 0.5em;
         width: 100%;
 
         background: var(--col-accent-2);
@@ -160,7 +164,10 @@ button, .button {
     [type=submit] {
       display: block;
       margin: 1em auto;
-      min-width: 50%;
+      max-width: 400px;
+      width: 100%;
+
+      font-size: 1.5em;
     }
 
   }

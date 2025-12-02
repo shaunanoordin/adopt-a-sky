@@ -9,8 +9,7 @@ import { $ } from '../util/html.js'
 export default class AdoptPage {
   constructor (app) {
     this.app = app
-
-    this.posting = false
+    this.adoptDataStatus = 'ready'
 
     // Bind functions and event handlers.
     this.doAdoption = this.doAdoption.bind(this)
@@ -42,10 +41,9 @@ export default class AdoptPage {
   async doAdoption (event) {
     event?.preventDefault()
 
-    if (this.posting) { return }
-    this.posting = true
-    $('#adoption-form button[type=submit]').disabled = true
-    $('#adoption-form .status').innerText = 'Adopting...'
+
+    if (this.adoptDataStatus === 'posting') { return }
+    this.setDataStatus('posting')
 
     try {
 
@@ -67,9 +65,9 @@ export default class AdoptPage {
       const resJson = await res.json()
 
       if (resJson.status === 'ok') {
-        $('#adoption-form .status').innerText = 'Adoption complete!'
+        this.setDataStatus('success')
       } else if (resJson.status === 'noop') {
-        $('#adoption-form .status').innerText = 'You\'ve already adopted a patch of sky.'
+        this.setDataStatus('no-op')
       }
 
       this.app.userData = resJson.user
@@ -78,11 +76,41 @@ export default class AdoptPage {
     } catch (err) {
 
       console.error(err)
-      $('#adoption-form .status').innerText = `ERROR ${err}`
+      this.setDataStatus('error', err)
 
-    } finally {
-      this.posting = false
-      $('#adoption-form button[type=submit]').disabled = false
+    }
+  }
+
+  setDataStatus (status = '', message = '', args = {}) {
+    const htmlDataStatus = $('#adoption-data-status')
+    const htmlSubmitButton = $('#adoption-form button[type=submit]')
+
+    htmlDataStatus.innerText = ''
+    htmlDataStatus.className = 'data-status'
+
+    this.adoptDataStatus = status
+
+    switch (status) {
+      case 'posting':
+        htmlDataStatus.innerText = 'Adopting...'
+        htmlDataStatus.className = 'data-status status-posting'
+        htmlSubmitButton.disabled = true
+        break
+      case 'success':
+        htmlDataStatus.innerText = 'Adoption complete!'
+        htmlDataStatus.className = 'data-status status-success'
+        htmlSubmitButton.disabled = true
+        break
+      case 'no-op':
+        htmlDataStatus.innerText = 'You\'ve already adopted a patch of sky.'
+        htmlDataStatus.className = 'data-status status-no-op'
+        htmlSubmitButton.disabled = true
+        break
+      case 'error':
+        htmlDataStatus.innerText = `ERROR: ${message}`
+        htmlDataStatus.className = 'data-status status-error'
+        htmlSubmitButton.disabled = false
+        break
     }
   }
 }
