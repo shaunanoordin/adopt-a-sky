@@ -60,7 +60,7 @@ export default class AdoptPage {
         body: JSON.stringify({ ra, dec })
       })
 
-      if (res.status !== 200) { throw new Error(`/api/auth returned ${res.status}`) }
+      if (res.status !== 200) { throw new Error('Could not perform adoption.') }
 
       const resJson = await res.json()
 

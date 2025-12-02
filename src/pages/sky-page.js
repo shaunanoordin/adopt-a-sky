@@ -110,7 +110,7 @@ export default class SkyPage {
     console.log('startSkyMap()')
 
     try {
-      if (this.skyMap) { throw new Error('SkyMap already started') }
+      if (this.skyMap) { throw new Error('SkyMap already started.') }
 
       $('#sky-map').style.width = '100%'
       $('#sky-map').style.height = '400px'
@@ -152,7 +152,7 @@ export default class SkyPage {
 
       const searchQuery = new URLSearchParams({ ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo })
       const res = await fetch(`/api/skydata?${searchQuery}`)
-      if (res.status !== 200) { throw new Error('Could not fetch data') }
+      if (res.status !== 200) { throw new Error('Could not fetch data.') }
       const resJson = await res.json()
       const data = resJson?.data || []
 
