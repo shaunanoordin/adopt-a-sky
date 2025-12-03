@@ -127,6 +127,23 @@ button, .button {
   }
 }
 
+.working, #user-status {
+  width: 48px;
+  height: 48px;
+
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='none'><g stroke='hsl(0, 0%, 100%)' stroke-width='2'><circle cx='16' cy='16' r='14' /><line x1='16' y1='16' x2='16' y2='2' /></g></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+
+  animation: 3s linear infinite workingRotation;
+}
+
+@keyframes workingRotation {
+  0% { rotate: 0deg; }
+  50% { rotate: 180deg; }
+  100% { rotate: 360deg; }
+}
+
 .adopt-page {
 
   #adoption-form {

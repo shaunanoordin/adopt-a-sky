@@ -151,13 +151,25 @@ class WebApp {
     const userInfo = decodeJWT(userToken)
     console.log('userInfo: ', userInfo)
 
-    if (userToken) {
+    if (!this.userChecked) {
+
+      $('#signout-button').style.display = 'none'
+      $('.g_id_signin').style.display = 'none'
+
+      $('#user-details').style.display = 'block'
+      $('#user-details').innerHTML = ''
+      
+      $('#user-status').style.display = 'block'
+
+    } else if (userToken) {
 
       $('#signout-button').style.display = 'block'
       $('.g_id_signin').style.display = 'none'
 
       $('#user-details').style.display = 'block'
       $('#user-details').innerHTML = `Signed in as ${userInfo?.name || '???'}`
+
+      $('#user-status').style.display = 'none'
 
     } else {
 
@@ -166,6 +178,8 @@ class WebApp {
 
       $('#user-details').style.display = 'none'
       $('#user-details').innerHTML = ''
+
+      $('#user-status').style.display = 'none'
 
     }
 
