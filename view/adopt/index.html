@@ -111,6 +111,45 @@
         class="conditional"
       >
         <h3>Let's find a patch of sky just for you!</h3>
+        <p>There are many ways to select a patch, so pick any of the following options that seem right for you.</p>
+        <p>Don't worry about it too much!</p>
+
+        <form
+          id="selection-form"
+          action="#"
+        >
+          <ul>
+            <li>
+              <button
+                data-type="constellation"
+              >Constellation</button>
+            </li>
+            <li>
+              <button
+                data-type="random"
+              >Random</button>
+            </li>
+          </ul>
+
+          <div
+            class="panel"
+            data-type="constellation"
+          >
+            <p>Constellations!</p>
+          </div>
+
+          <div
+            class="panel"
+            data-type="random"
+          >
+            <p>Ah, you're leaving your selection to the roll of the dice. A good choice!</p>
+            <button
+              id="selection-button-random"
+              type="button"
+            >Find a patch!</button>
+          </div>
+
+        </form>
 
         <form
           id="adoption-form"

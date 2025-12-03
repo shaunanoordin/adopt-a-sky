@@ -158,7 +158,39 @@ button, .button {
 
 .adopt-page {
 
+  #selection-form {
+    max-width: 600px;
+    margin: 1em auto;
+    padding: 1em;
+
+    border: 2px solid var(--col-theme-1);
+    border-radius: 1em;
+
+    > ul {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        margin: 0;
+        padding: 0;
+      }
+
+      button {
+        height: 120px;
+      }
+    }
+
+    .panel {
+      display: none;
+    }
+  }
+
   #adoption-form {
+    display: none;
     max-width: 600px;
     margin: 1em auto;
     padding: 1em;

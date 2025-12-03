@@ -4,14 +4,23 @@ Allows a user to adopt a patch of sky.
 Only valid if user is logged in, and has NOT yet adopted a patch of sky.
  */
 
-import { $ } from '../util/html.js'
+import { $, $all } from '../util/html.js'
 
 export default class AdoptPage {
   constructor (app) {
     this.app = app
     this.adoptDataStatus = 'ready'
 
-    // Bind functions and event handlers.
+    // Bind functions and event handlers: Selection form
+    $('#selection-form').addEventListener('submit', this.doNothing)
+    
+    this.doPanelSelect = this.doPanelSelect.bind(this)
+    $all('#selection-form ul li button').forEach(button => button.addEventListener('click', this.doPanelSelect))
+
+    this.doSelectionRandom = this.doSelectionRandom.bind(this)
+    $('#selection-button-random').addEventListener('click', this.doSelectionRandom)
+
+    // Bind functions and event handlers: Adoption form
     this.doAdoption = this.doAdoption.bind(this)
     $('#adoption-form').addEventListener('submit', this.doAdoption)
   }
@@ -38,9 +47,46 @@ export default class AdoptPage {
     }
   }
 
+  setDataStatus (status = '', message = '', args = {}) {
+    const htmlDataStatus = $('#adoption-data-status')
+    const htmlSubmitButton = $('#adoption-form button[type=submit]')
+
+    htmlDataStatus.innerText = ''
+    htmlDataStatus.className = 'data-status'
+
+    this.adoptDataStatus = status
+
+    switch (status) {
+      case 'posting':
+        htmlDataStatus.innerText = 'Adopting...'
+        htmlDataStatus.className = 'data-status status-posting'
+        htmlSubmitButton.disabled = true
+        break
+      case 'success':
+        htmlDataStatus.innerText = 'Adoption complete!'
+        htmlDataStatus.className = 'data-status status-success'
+        htmlSubmitButton.disabled = true
+        break
+      case 'no-op':
+        htmlDataStatus.innerText = 'You\'ve already adopted a patch of sky.'
+        htmlDataStatus.className = 'data-status status-no-op'
+        htmlSubmitButton.disabled = true
+        break
+      case 'error':
+        htmlDataStatus.innerText = `ERROR: ${message}`
+        htmlDataStatus.className = 'data-status status-error'
+        htmlSubmitButton.disabled = false
+        break
+    }
+  }
+
+  showAdoptionForm () {
+    $('#selection-form').style.display = 'none'
+    $('#adoption-form').style.display = 'block'
+  }
+
   async doAdoption (event) {
     event?.preventDefault()
-
 
     if (this.adoptDataStatus === 'posting') { return }
     this.setDataStatus('posting')
@@ -81,36 +127,27 @@ export default class AdoptPage {
     }
   }
 
-  setDataStatus (status = '', message = '', args = {}) {
-    const htmlDataStatus = $('#adoption-data-status')
-    const htmlSubmitButton = $('#adoption-form button[type=submit]')
+  doNothing (event) {
+    event.preventDefault()
+  }
 
-    htmlDataStatus.innerText = ''
-    htmlDataStatus.className = 'data-status'
+  doSelectionRandom (event) {
 
-    this.adoptDataStatus = status
+    // Roll the dice!
+    const randomRa = (Math.random() * 360).toFixed(4)
+    const randomDec = (Math.random() * 360 - 180).toFixed(4)
 
-    switch (status) {
-      case 'posting':
-        htmlDataStatus.innerText = 'Adopting...'
-        htmlDataStatus.className = 'data-status status-posting'
-        htmlSubmitButton.disabled = true
-        break
-      case 'success':
-        htmlDataStatus.innerText = 'Adoption complete!'
-        htmlDataStatus.className = 'data-status status-success'
-        htmlSubmitButton.disabled = true
-        break
-      case 'no-op':
-        htmlDataStatus.innerText = 'You\'ve already adopted a patch of sky.'
-        htmlDataStatus.className = 'data-status status-no-op'
-        htmlSubmitButton.disabled = true
-        break
-      case 'error':
-        htmlDataStatus.innerText = `ERROR: ${message}`
-        htmlDataStatus.className = 'data-status status-error'
-        htmlSubmitButton.disabled = false
-        break
-    }
+    $('input[name="ra"]').value = randomRa
+    $('input[name="dec"]').value = randomDec 
+
+    this.showAdoptionForm()
+  }
+
+  doPanelSelect (event) {
+    const selectionType = event.currentTarget.dataset.type
+
+    // Hide all panels except for the selected one.
+    $all('#selection-form .panel').forEach(panel => panel.style.display = 'none')
+    $(`#selection-form .panel[data-type=${selectionType}]`).style.display = 'block'
   }
 }
