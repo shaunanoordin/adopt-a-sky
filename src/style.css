@@ -147,17 +147,29 @@ button, .button {
         font-weight: bold;
       }
 
-      input {
-        display: block;
+      .input-container {
+        display: flex;
+        flex-direction: row;
         padding: 0.5em;
         width: 100%;
 
         background: var(--col-accent-2);
-        border: none;
         border-radius: 0.5em;
-        color: var(--col-dark-1);
-        font-size: 1.5em;
-        text-align: right;
+
+        input {
+          flex: 1 1 auto;
+
+          background: none;
+          border: none;
+          color: var(--col-dark-1);
+          font-size: 1.5em;
+          text-align: right;
+        }
+
+        span {
+          flex: 0 0 auto;
+          padding-right: 2em;
+        }
       }
     }
 
