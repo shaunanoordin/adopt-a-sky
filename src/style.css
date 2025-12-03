@@ -14,7 +14,7 @@
   --col-light-2: hsl(0, 0%, 100%);
   --col-mid-1: hsl(0, 0%, 60%);
   --col-dark-1: hsl(0, 0%, 20%);
-  --col-theme-1: hsl(210, 60%, 60%);
+  --col-theme-1: hsl(195, 60%, 40%);
   --col-interactive-1: hsl(45, 80%, 60%);
   --col-interactive-2: hsl(45, 100%, 80%);
   --col-interactive-3: hsl(45, 100%, 90%);
@@ -50,9 +50,21 @@ header {
 
   @media (max-width: 600px) {
     flex-direction: column;
+    gap: 0.25em;
 
     .spacer {
       display: none;
+    }
+  }
+
+  nav {
+    ul {
+      display: flex;
+      flex-direction: row;
+      gap: 1em;
+      list-style: none;
+      margin: 0;
+      padding: 0;
     }
   }
 }
