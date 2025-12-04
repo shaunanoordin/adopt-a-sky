@@ -120,7 +120,8 @@ button, .button {
   }
 }
 
-/* "Hey, I'm working here!" spinner */
+/* "Hey, I'm working here!" spinner. #user-status is used in the header to
+   indicate that the app is still initialising. */
 .working, #user-status {
   width: 48px;
   height: 48px;
@@ -136,6 +137,22 @@ button, .button {
   0% { rotate: 0deg; }
   50% { rotate: 180deg; }
   100% { rotate: 360deg; }
+}
+
+/* Data Status: indicates when the Adopt Page or Sky Page is performing a GET
+   or POST action. */
+.data-status {
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+
+  border-radius: 0.5em;
+  background: var(--col-accent-1);
+  color: var(--col-light-1);
+  text-align: center;
+
+  &.status-error {
+    background: var(--col-error);
+  }
 }
 
 /* Header: common component across website. */
@@ -317,20 +334,6 @@ Sky (Viewing) Page
       flex: 0 0 300px;
       margin: 0;
     }
-  }
-}
-
-.data-status {
-  padding: 0.5em 1em;
-  margin: 0.5em 0;
-
-  border-radius: 0.5em;
-  background: var(--col-accent-1);
-  color: var(--col-light-1);
-  text-align: center;
-
-  &.status-error {
-    color: var(--col-error);
   }
 }
 
