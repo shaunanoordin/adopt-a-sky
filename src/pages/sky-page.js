@@ -70,16 +70,33 @@ export default class SkyPage {
 
   }
 
+  // Starts the page, once the window has fully loaded.
+  // - Triggered by WebApp.start()
   start () {
+    console.log('page.start()')
     this.update()
   }
 
+  // Updates the HTML document to match the app's state.
+  // - Triggered by the parent WebApp's update().
+  // - Triggered by the Page's start().
+  // - Triggered after a SUCCESSFUL adoption action. (See doAdoption()).
+  // - Also see updateDataStatus().
+  // - IF the user is logged in and has adopted a patch of sky, then this will
+  //   also trigger startSkyMap() AND an initial getSkyData() data fetch.
   update () {
+    console.log('page.update()')
+
     // Reset
     $('#anonymous-section').style.display = 'none'
     $('#unadopted-section').style.display = 'none'
     $('#sky-section').style.display = 'none'
     if (!this.app.userChecked) { return }
+
+    // Switch between one of 3 states:
+    // - user hasn't logged in.
+    // - logged-in user hasn't adopted patch.
+    // - logged-in user has adopted patch.
 
     if (!this.app.userData) {
       $('#anonymous-section').style.display = 'block'
@@ -89,6 +106,8 @@ export default class SkyPage {
       return
     }
 
+    // For the Sky Page, the "logged-in user has adopted patch" state is the
+    // MAIN state.
     $('#sky-section').style.display = 'block'
 
     // Get data!
@@ -106,6 +125,41 @@ export default class SkyPage {
     $('#sky-info').innerHTML = `<p>Your patch of sky is centred around the coordinates RA = <b>${patch_ra?.toFixed?.(4)}&deg;</b> dec = <b>${patch_dec?.toFixed?.(4)}&deg</b>, with a radius of <b>${(patch_radius * 3600)?.toFixed(0)} arcseconds</b>.</p>`
   }
 
+  // Sets the status of the data get/post/whatever action AND updates the HTML
+  // elements displaying said status accordingly.
+  // - Triggered only by the getSkyData() action.
+  updateDataStatus (status = '', message = '', args = {}) {
+    const htmlDataStatus = $('#sky-data-status')
+    htmlDataStatus.innerText = ''
+    htmlDataStatus.className = 'data-status'
+
+    this.skyDataStatus = status
+
+    switch (status) {
+      case 'fetching':
+        htmlDataStatus.innerText = 'Checking what\'s available in this patch of the sky...'
+        htmlDataStatus.className = 'data-status status-fetching'
+        break
+      case 'success':
+        const extraMessage = (args?.count >= MAX_RESULTS_PER_QUERY)
+          ? `(Due to the amount of data, we can only show ${MAX_RESULTS_PER_QUERY} items at a time, and they're not displayed in any particular order. You could narrow your time span to possibly find more results.)`
+          : ''
+        htmlDataStatus.innerText = `Here\'s what we found! ${extraMessage}`
+        htmlDataStatus.className = 'data-status status-success'
+        break
+      case 'no-data':
+        htmlDataStatus.innerText = 'Sorry, nothing has been found in this patch of sky, for the given time span. Try changing the time span.'
+        htmlDataStatus.className = 'data-status status-no-data'
+        break
+      case 'error':
+        htmlDataStatus.innerText = `ERROR: ${message}`
+        htmlDataStatus.className = 'data-status status-error'
+        break
+    }
+  }
+
+  // Adds the Aladin Lite-powered Sky Map to the page.
+  // - Only makes sense if a Sky Map hasn't been previously initialised.
   startSkyMap (ra, dec, radiusInDegrees) {
     console.log('startSkyMap()')
 
@@ -147,7 +201,7 @@ export default class SkyPage {
     }
 
     try {
-      this.setDataStatus('fetching')
+      this.updateDataStatus('fetching')
       htmlSkyData.innerHTML = ''
 
       const searchQuery = new URLSearchParams({ ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo })
@@ -177,45 +231,15 @@ export default class SkyPage {
       })
 
       if (data.length === 0) {
-        this.setDataStatus('no-data')
+        this.updateDataStatus('no-data')
       } else {
-        this.setDataStatus('success', '', { count: data.length })
+        this.updateDataStatus('success', '', { count: data.length })
       }
 
     } catch (err) {
       console.error(err)
-      this.setDataStatus('error', err)
+      this.updateDataStatus('error', err)
       htmlSkyData.innerHTML = ``
-    }
-  }
-
-  setDataStatus (status = '', message = '', args = {}) {
-    const htmlDataStatus = $('#sky-data-status')
-    htmlDataStatus.innerText = ''
-    htmlDataStatus.className = 'data-status'
-
-    this.skyDataStatus = status
-
-    switch (status) {
-      case 'fetching':
-        htmlDataStatus.innerText = 'Checking what\'s available in this patch of the sky...'
-        htmlDataStatus.className = 'data-status status-fetching'
-        break
-      case 'success':
-        const extraMessage = (args?.count >= MAX_RESULTS_PER_QUERY)
-          ? `(Due to the amount of data, we can only show ${MAX_RESULTS_PER_QUERY} items at a time, and they're not displayed in any particular order. You could narrow your time span to possibly find more results.)`
-          : ''
-        htmlDataStatus.innerText = `Here\'s what we found! ${extraMessage}`
-        htmlDataStatus.className = 'data-status status-success'
-        break
-      case 'no-data':
-        htmlDataStatus.innerText = 'Sorry, nothing has been found in this patch of sky, for the given time span. Try changing the time span.'
-        htmlDataStatus.className = 'data-status status-no-data'
-        break
-      case 'error':
-        htmlDataStatus.innerText = `ERROR: ${message}`
-        htmlDataStatus.className = 'data-status status-error'
-        break
     }
   }
 }

@@ -142,7 +142,11 @@ class WebApp {
     this.update()
   }
 
-  // Updates the webpage to match the app status.
+  // Updates the HTML document to match the app's state.
+  // - Triggered when the WebApp starts.
+  // - Triggered when user check is complete, when user signs in, and when user
+  //   signs out.
+  // - Triggers the current Page's update().
   update () {
     console.log('update()')
 

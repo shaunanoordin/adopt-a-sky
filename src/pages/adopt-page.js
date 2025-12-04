@@ -25,17 +25,31 @@ export default class AdoptPage {
     $('#adoption-form').addEventListener('submit', this.doAdoption)
   }
 
+  // Starts the page, once the window has fully loaded.
+  // - Triggered by WebApp.start()
   start () {
+    console.log('page.start()')
     this.update()
   }
 
+  // Updates the HTML document to match the app's state.
+  // - Triggered by the parent WebApp's update().
+  // - Triggered by the Page's start().
+  // - Triggered after a SUCCESSFUL adoption action. (See doAdoption()).
+  // - Also see updateDataStatus().
   update () {
+    console.log('page.update()')
+
     // Reset
     $('#anonymous-section').style.display = 'none'
     $('#adopted-section').style.display = 'none'
     $('#adoption-section').style.display = 'none'
     if (!this.app.userChecked) { return }
 
+    // Switch between one of 3 states:
+    // - user hasn't logged in.
+    // - logged-in user hasn't adopted patch.
+    // - logged-in user has adopted patch.
     if (!this.app.userData) {
       $('#anonymous-section').style.display = 'block'
 
@@ -45,9 +59,18 @@ export default class AdoptPage {
     } else {
       $('#adoption-section').style.display = 'block'
     }
+
+    // For the Adopt Page, the "logged-in user hasn't adopted patch" state is
+    // the MAIN state, but most of the action is performed via the HTML forms,
+    // so there's little follow up action required here.
   }
 
-  setDataStatus (status = '', message = '', args = {}) {
+  // Sets the status of the data get/post/whatever action AND updates the HTML
+  // elements displaying said status accordingly.
+  // - Triggered only by the doAdoption() action.
+  // - The Adopt Page's .data-status element has '.conditional' by default, so
+  //   it's hidden until the "adopt" action is triggered. 
+  updateDataStatus (status = '', message = '', args = {}) {
     const htmlDataStatus = $('#adoption-data-status')
     const htmlSubmitButton = $('#adoption-form button[type=submit]')
 
@@ -89,7 +112,7 @@ export default class AdoptPage {
     event?.preventDefault()
 
     if (this.adoptDataStatus === 'posting') { return }
-    this.setDataStatus('posting')
+    this.updateDataStatus('posting')
 
     try {
 
@@ -111,9 +134,9 @@ export default class AdoptPage {
       const resJson = await res.json()
 
       if (resJson.status === 'ok') {
-        this.setDataStatus('success')
+        this.updateDataStatus('success')
       } else if (resJson.status === 'noop') {
-        this.setDataStatus('no-op')
+        this.updateDataStatus('no-op')
       }
 
       this.app.userData = resJson.user
@@ -122,7 +145,7 @@ export default class AdoptPage {
     } catch (err) {
 
       console.error(err)
-      this.setDataStatus('error', err)
+      this.updateDataStatus('error', err)
 
     }
   }
