@@ -134,8 +134,8 @@ export default class AdoptPage {
   doSelectionRandom (event) {
 
     // Roll the dice!
-    const randomRa = (Math.random() * 360).toFixed(4)
-    const randomDec = (Math.random() * 360 - 180).toFixed(4)
+    const randomRa = (Math.random() * 360).toFixed(4)  // Valid RA ranger: 0º to 360º
+    const randomDec = (Math.random() * 180 - 90).toFixed(4)  // Valid dec range: -90º South to +90º North
 
     $('input[name="ra"]').value = randomRa
     $('input[name="dec"]').value = randomDec 
