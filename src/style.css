@@ -200,6 +200,8 @@ Adoption Page
 
 .adopt-page {
 
+  /* Selection Form: allows users to pick which Selection method they want to
+     use to adopt a patch. */
   #selection-form {
     max-width: 600px;
     margin: 1em auto;
@@ -208,6 +210,7 @@ Adoption Page
     border: 2px solid var(--col-theme-1);
     border-radius: 1em;
 
+    /* Lists Selection methods. Kinda like a series of Tabs. */
     > ul {
       display: flex;
       flex-direction: row;
@@ -226,11 +229,16 @@ Adoption Page
       }
     }
 
+    /* Once a Selection method is chosen, the rest of the process is shown in a
+       panel. */
     .panel {
       display: none;
     }
   }
 
+  /* Adoption Form: final step for the adoption process. Displays the RA and dec
+     coordinates (determined from the Selection process) and a final
+     confirmation button. */
   #adoption-form {
     display: none;
     max-width: 600px;
@@ -295,6 +303,8 @@ Sky (Viewing) Page
 
 .sky-page {
 
+  /* Sky Controls: allows users to fine-tune the range of sky data they want to
+     see. */
   #sky-controls {
     padding: 0.5em 1em;
     margin: 0.5em 0;
@@ -317,6 +327,8 @@ Sky (Viewing) Page
     }
   }
 
+  /* Sky Data List: displays all events/objects observed in a patch of sky.
+   */
   #sky-data {
     display: flex;
     flex-direction: row;
@@ -337,6 +349,8 @@ Sky (Viewing) Page
   }
 }
 
+/* Datacard: individual events/objects observed in a patch of sky are presented
+   as "trading cards" called datacards. */
 .datacard {
   display: flex;
   flex-direction: column;
