@@ -1,7 +1,8 @@
 /*
 Adoption Page
 Allows a user to adopt a patch of sky.
-Only valid if user is logged in, and has NOT yet adopted a patch of sky.
+- Only useful if user is logged in, and has NOT yet adopted a patch of sky.
+- Otherwise, directs users to login, or to the Sky Page.
  */
 
 import { $, $all } from '../util/html.js'

@@ -1,7 +1,8 @@
 /*
 Sky Viewer Page
 Displays the sky map and shows what's happening in the adopted patch of sky.
-Only valid if user is logged in, and has adopted a patch of sky.
+- Only valid if user is logged in, and HAS adopted a patch of sky.
+- Otherwise, directs users to login, or to the Adopt Page.
  */
 
 import Aladin from 'aladin-lite'
@@ -190,6 +191,11 @@ export default class SkyPage {
     }
   }
 
+  // Fetches data about the specified patch of sky.
+  // - If the fetch action is successful and has data, the data is populated on
+  //   the HTML page as "trading cards".
+  // - If a fetch action is currently ongoing, this function will not trigger
+  //   another one.
   async getSkyData (ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo) {
     const htmlSkyData = $('#sky-data')
 
@@ -222,7 +228,8 @@ export default class SkyPage {
         const htmlType = $create('div.datacard-type', htmlLI)
         htmlType.innerText = SHERLOCK_TYPES[item.sherlock] ? `${item.sherlock} - ${SHERLOCK_TYPES[item.sherlock]}` : SHERLOCK_TYPES['']
 
-        // WARNING: DANGER ZONE
+        // ❗️ WARNING: DANGER ZONE
+        // We need to purify the HTML here.
         const htmlBody = $create('div.datacard-body', htmlLI)
         htmlBody.innerHTML = `
           <p>This was found <b>${item.days_ago.toFixed(0)} days ago</b> at coordinates <b>RA=${item.ramean.toFixed(4)}</b> and <b>dec=${item.decmean.toFixed(4)}</b></p>
