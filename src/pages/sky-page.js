@@ -165,26 +165,32 @@ export default class SkyPage {
     console.log('startSkyMap()')
 
     try {
-      if (this.skyMap) { throw new Error('SkyMap already started.') }
+      if (!this.skyMap) {
 
-      $('#sky-map').style.width = '100%'
-      $('#sky-map').style.height = '400px'
+        // Prepare the sky map!
+        this.skyMap = Aladin.aladin('#sky-map', {
+          // Main config
+          fov: radiusInDegrees,  // Field of view
+          // survey: 'CDS/P/Rubin/FirstLook',  // Visualisation data. If blank, this defaults to 'P/DSS2/color'
 
-      // Prepare the sky map!
-      this.skyMap = Aladin.aladin('#sky-map', {
-        // Main config
-        fov: radiusInDegrees,  // Field of view
-        // survey: 'CDS/P/Rubin/FirstLook',  // Visualisation data. If blank, this defaults to 'P/DSS2/color'
+          // Misc controls
+          showCooGridControl: true,
+          showGoToControl: false,
+          showProjectionControl: false,
+          showReticle: false,
+        })
 
-        // Misc controls
-        showCooGridControl: true,
-        showGoToControl: false,
-        showProjectionControl: false,
-        showReticle: false,
-      })
+        console.log('Sky Map started.')
+
+      } else {
+
+        console.log('Sky Map already exists!')
+
+      }
 
       // Go to the coordinates of the adopted patch of sky
       this.skyMap.gotoRaDec(ra, dec)
+      this.skyMap.setFoV(radiusInDegrees)
 
     } catch (err) {
       console.error(err)

@@ -303,6 +303,14 @@ Sky (Viewing) Page
 
 .sky-page {
 
+  /* Sky Map: it's a map of the sky, powered by Aladain Lite. */
+  #sky-map {
+    height: 500px;
+    margin: 0 auto;
+    max-width: 500px;
+    width: 100%;
+  }
+
   /* Sky Controls: allows users to fine-tune the range of sky data they want to
      see. */
   #sky-controls {
