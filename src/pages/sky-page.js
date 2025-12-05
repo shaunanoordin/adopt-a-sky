@@ -1,7 +1,8 @@
 /*
 Sky Viewer Page
 Displays the sky map and shows what's happening in the adopted patch of sky.
-Only valid if user is logged in, and has adopted a patch of sky.
+- Only valid if user is logged in, and HAS adopted a patch of sky.
+- Otherwise, directs users to login, or to the Adopt Page.
  */
 
 import Aladin from 'aladin-lite'
@@ -70,16 +71,33 @@ export default class SkyPage {
 
   }
 
+  // Starts the page, once the window has fully loaded.
+  // - Triggered by WebApp.start()
   start () {
+    console.log('page.start()')
     this.update()
   }
 
+  // Updates the HTML document to match the app's state.
+  // - Triggered by the parent WebApp's update().
+  // - Triggered by the Page's start().
+  // - Triggered after a SUCCESSFUL adoption action. (See doAdoption()).
+  // - Also see updateDataStatus().
+  // - IF the user is logged in and has adopted a patch of sky, then this will
+  //   also trigger startSkyMap() AND an initial getSkyData() data fetch.
   update () {
+    console.log('page.update()')
+
     // Reset
     $('#anonymous-section').style.display = 'none'
     $('#unadopted-section').style.display = 'none'
     $('#sky-section').style.display = 'none'
     if (!this.app.userChecked) { return }
+
+    // Switch between one of 3 states:
+    // - user hasn't logged in.
+    // - logged-in user hasn't adopted patch.
+    // - logged-in user has adopted patch.
 
     if (!this.app.userData) {
       $('#anonymous-section').style.display = 'block'
@@ -89,6 +107,8 @@ export default class SkyPage {
       return
     }
 
+    // For the Sky Page, the "logged-in user has adopted patch" state is the
+    // MAIN state.
     $('#sky-section').style.display = 'block'
 
     // Get data!
@@ -106,90 +126,10 @@ export default class SkyPage {
     $('#sky-info').innerHTML = `<p>Your patch of sky is centred around the coordinates RA = <b>${patch_ra?.toFixed?.(4)}&deg;</b> dec = <b>${patch_dec?.toFixed?.(4)}&deg</b>, with a radius of <b>${(patch_radius * 3600)?.toFixed(0)} arcseconds</b>.</p>`
   }
 
-  startSkyMap (ra, dec, radiusInDegrees) {
-    console.log('startSkyMap()')
-
-    try {
-      if (this.skyMap) { throw new Error('SkyMap already started') }
-
-      $('#sky-map').style.width = '100%'
-      $('#sky-map').style.height = '400px'
-
-      // Prepare the sky map!
-      this.skyMap = Aladin.aladin('#sky-map', {
-        // Main config
-        fov: radiusInDegrees,  // Field of view
-        // survey: 'CDS/P/Rubin/FirstLook',  // Visualisation data. If blank, this defaults to 'P/DSS2/color'
-
-        // Misc controls
-        showCooGridControl: true,
-        showGoToControl: false,
-        showProjectionControl: false,
-        showReticle: false,
-      })
-
-      // Go to the coordinates of the adopted patch of sky
-      this.skyMap.gotoRaDec(ra, dec)
-
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  async getSkyData (ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo) {
-    const htmlSkyData = $('#sky-data')
-
-    if (this.skyDataStatus === 'fetching') {
-      const htmlDataStatus = $('#sky-data-status')
-      htmlDataStatus.innerText = 'Please wait, we\'re still checking.'
-      htmlDataStatus.className = 'data-status status-busy'
-      return
-    }
-
-    try {
-      this.setDataStatus('fetching')
-      htmlSkyData.innerHTML = ''
-
-      const searchQuery = new URLSearchParams({ ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo })
-      const res = await fetch(`/api/skydata?${searchQuery}`)
-      if (res.status !== 200) { throw new Error('Could not fetch data') }
-      const resJson = await res.json()
-      const data = resJson?.data || []
-
-      data.forEach(item => {
-        const htmlLI = $create('li.datacard', htmlSkyData)
-        htmlLI.className = 'datacard'
-        
-        const htmlTitle = $create('h4.datacard-title', htmlLI)
-        htmlTitle.innerText = item.objectId
-
-        const htmlArt = $create('div.datacard-art', htmlLI)
-
-        const htmlType = $create('div.datacard-type', htmlLI)
-        htmlType.innerText = SHERLOCK_TYPES[item.sherlock] ? `${item.sherlock} - ${SHERLOCK_TYPES[item.sherlock]}` : SHERLOCK_TYPES['']
-
-        // WARNING: DANGER ZONE
-        const htmlBody = $create('div.datacard-body', htmlLI)
-        htmlBody.innerHTML = `
-          <p>This was found <b>${item.days_ago.toFixed(0)} days ago</b> at coordinates <b>RA=${item.ramean.toFixed(4)}</b> and <b>dec=${item.decmean.toFixed(4)}</b></p>
-          <p>${item.description}</p>
-        `
-      })
-
-      if (data.length === 0) {
-        this.setDataStatus('no-data')
-      } else {
-        this.setDataStatus('success', '', { count: data.length })
-      }
-
-    } catch (err) {
-      console.error(err)
-      this.setDataStatus('error', err)
-      htmlSkyData.innerHTML = ``
-    }
-  }
-
-  setDataStatus (status = '', message = '', args = {}) {
+  // Sets the status of the data get/post/whatever action AND updates the HTML
+  // elements displaying said status accordingly.
+  // - Triggered only by the getSkyData() action.
+  updateDataStatus (status = '', message = '', args = {}) {
     const htmlDataStatus = $('#sky-data-status')
     htmlDataStatus.innerText = ''
     htmlDataStatus.className = 'data-status'
@@ -216,6 +156,103 @@ export default class SkyPage {
         htmlDataStatus.innerText = `ERROR: ${message}`
         htmlDataStatus.className = 'data-status status-error'
         break
+    }
+  }
+
+  // Adds the Aladin Lite-powered Sky Map to the page.
+  // - Only makes sense if a Sky Map hasn't been previously initialised.
+  startSkyMap (ra, dec, radiusInDegrees) {
+    console.log('startSkyMap()')
+
+    try {
+      if (!this.skyMap) {
+
+        // Prepare the sky map!
+        this.skyMap = Aladin.aladin('#sky-map', {
+          // Main config
+          fov: radiusInDegrees,  // Field of view
+          // survey: 'CDS/P/Rubin/FirstLook',  // Visualisation data. If blank, this defaults to 'P/DSS2/color'
+
+          // Misc controls
+          showCooGridControl: true,
+          showGoToControl: false,
+          showProjectionControl: false,
+          showReticle: false,
+        })
+
+        console.log('Sky Map started.')
+
+      } else {
+
+        console.log('Sky Map already exists!')
+
+      }
+
+      // Go to the coordinates of the adopted patch of sky
+      this.skyMap.gotoRaDec(ra, dec)
+      this.skyMap.setFoV(radiusInDegrees)
+
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  // Fetches data about the specified patch of sky.
+  // - If the fetch action is successful and has data, the data is populated on
+  //   the HTML page as "trading cards".
+  // - If a fetch action is currently ongoing, this function will not trigger
+  //   another one.
+  async getSkyData (ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo) {
+    const htmlSkyData = $('#sky-data')
+
+    if (this.skyDataStatus === 'fetching') {
+      const htmlDataStatus = $('#sky-data-status')
+      htmlDataStatus.innerText = 'Please wait, we\'re still checking.'
+      htmlDataStatus.className = 'data-status status-busy'
+      return
+    }
+
+    try {
+      this.updateDataStatus('fetching')
+      htmlSkyData.innerHTML = ''
+
+      const searchQuery = new URLSearchParams({ ra, dec, radiusInDegrees, minDaysAgo, maxDaysAgo })
+      const res = await fetch(`/api/skydata?${searchQuery}`)
+      if (res.status !== 200) { throw new Error('Could not fetch data.') }
+      const resJson = await res.json()
+      const data = resJson?.data || []
+
+      data.forEach(item => {
+        const htmlLI = $create('li.datacard', htmlSkyData)
+        htmlLI.className = 'datacard'
+        
+        const htmlTitle = $create('h4.datacard-title', htmlLI)
+        htmlTitle.innerText = item.objectId
+
+        const htmlArt = $create('div.datacard-art', htmlLI)
+
+        const htmlType = $create('div.datacard-type', htmlLI)
+        htmlType.innerText = SHERLOCK_TYPES[item.sherlock] ? `${item.sherlock} - ${SHERLOCK_TYPES[item.sherlock]}` : SHERLOCK_TYPES['']
+
+        // ❗️ WARNING: DANGER ZONE
+        // We need to purify the HTML here.
+        const htmlBody = $create('div.datacard-body', htmlLI)
+        htmlBody.innerHTML = `
+          <p>This was found <b>${item.days_ago.toFixed(0)} days ago</b> at coordinates <b>RA=${item.ramean.toFixed(4)}</b> and <b>dec=${item.decmean.toFixed(4)}</b></p>
+          <p>${item.description}</p>
+        `
+      })
+
+      if (data.length === 0) {
+        this.updateDataStatus('no-data')
+      } else {
+        this.updateDataStatus('success', '', { count: data.length })
+      }
+
+    } catch (err) {
+      console.error(err)
+      this.updateDataStatus('error', err)
+      htmlSkyData.innerHTML = ``
     }
   }
 }

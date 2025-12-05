@@ -7,6 +7,10 @@ export function $ (query) {
   return document.querySelector(query)
 }
 
+export function $all (query) {
+  return Array.from(document.querySelectorAll(query))
+}
+
 /*
 Creates a new element matching the query, and appends it to a parent element 
 if any). query has to include the element name, and may optionally include

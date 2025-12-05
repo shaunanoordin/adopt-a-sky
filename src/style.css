@@ -1,3 +1,16 @@
+/*
+Adopt-A-Sky Stylesheet
+ */
+
+/*
+General Settings
+-------------------------------------------------------------------------------
+ */
+
+* {
+  box-sizing: border-box;
+}
+
 :root {
   font-family: Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -10,23 +23,30 @@
   --col-light-2: hsl(0, 0%, 100%);
   --col-mid-1: hsl(0, 0%, 60%);
   --col-dark-1: hsl(0, 0%, 20%);
-  --col-theme-1: hsl(210, 60%, 60%);
+  --col-theme-1: hsl(195, 60%, 40%);
   --col-interactive-1: hsl(45, 80%, 60%);
   --col-interactive-2: hsl(45, 100%, 80%);
   --col-interactive-3: hsl(45, 100%, 90%);
   --col-interactive-4: hsl(45, 100%, 50%);
   --col-uninteractive-1: hsl(240, 40%, 60%);
-  --col-accent-1: hsl(150, 40%, 80%);
+  --col-accent-1: hsl(195, 60%, 70%);
+  --col-accent-2: hsl(60, 40%, 90%);
   --col-error: hsl(15, 100%, 50%);
 }
+
+/*
+Shared/Common Components
+-------------------------------------------------------------------------------
+ */
 
 a {
   font-weight: 500;
   color: var(--col-interactive-4);
   text-decoration: inherit;
-}
-a:hover {
-  color: var(--col-interactive-2);
+
+  &:hover {
+    color: var(--col-interactive-2);
+  }
 }
 
 html, body {
@@ -34,64 +54,43 @@ html, body {
   padding: 0;
 }
 
-header {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  gap: 1em;
-  padding: 1em;
-  background: var(--col-theme-1);
-  color: var(--col-light-1);
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-
-    .spacer {
-      display: none;
-    }
-  }
-}
-
-main {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 1em;
-
-  section.s {
-    display: none;
-  }
-}
-
 h1 {
   padding: 0;
   margin: 0;
 }
 
+/* Buttons (and links styled to look like buttons): used to indicate actions
+   users can take. */
 button, .button {
+  padding: 0.5em 1em;
+  
   background: var(--col-light-2);
-  border: 1px solid var(--col-interactive-1);
+  border: 2px solid var(--col-interactive-1);
+  border-radius: 0.5em;
   color: var(--col-interactive-4);
   cursor: pointer;
-  border-radius: 0.5em;
-  padding: 0.5em 1em;
-
+  font-weight: bold;
+  
   &:hover, &:focus {
-    border: 1px solid var(--col-interactive-2);
+    border: 2px solid var(--col-interactive-2);
     color: var(--col-interactive-2);
   }
 
   &:active {
-    border: 1px solid var(--col-interactive-3);
+    border: 2px solid var(--col-interactive-3);
     color: var(--col-interactive-3);
   }
 
   &:disabled {
     background: var(--col-mid-1);
+    border: 2px solid var(--col-uninteractive-1);
     color: var(--col-uninteractive-1);
-    border: 1px solid var(--col-uninteractive-1);
   }
 }
 
+/* Spacer: used in flex regions to fill up space. Basically, anything before the
+  spacer gets aligned to the left/top of the flex region, and anything after
+  gets aligned to the right/bottom of the flex region. */
 .spacer {
   flex: 1 1 auto;
 }
@@ -101,6 +100,7 @@ button, .button {
   display: none;
 }
 
+/* Message box: prompts users with "what to do next" actions */
 .message {
   border: 2px solid var(--col-theme-1);
   border-radius: 1em;
@@ -120,38 +120,199 @@ button, .button {
   }
 }
 
+/* "Hey, I'm working here!" spinner. #user-status is used in the header to
+   indicate that the app is still initialising. */
+.working, #user-status {
+  width: 48px;
+  height: 48px;
+
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='none'><g stroke='hsl(0, 0%, 100%)' stroke-width='2'><circle cx='16' cy='16' r='14' /><line x1='16' y1='16' x2='16' y2='2' /></g></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+
+  animation: 3s linear infinite workingRotation;
+}
+
+@keyframes workingRotation {
+  0% { rotate: 0deg; }
+  50% { rotate: 180deg; }
+  100% { rotate: 360deg; }
+}
+
+/* Data Status: indicates when the Adopt Page or Sky Page is performing a GET
+   or POST action. */
+.data-status {
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+
+  border-radius: 0.5em;
+  background: var(--col-accent-1);
+  color: var(--col-light-1);
+  text-align: center;
+
+  &.status-error {
+    background: var(--col-error);
+  }
+}
+
+/* Header: common component across website. */
+header {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  padding: 1em;
+  background: var(--col-theme-1);
+  color: var(--col-light-1);
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 0.25em;
+
+    .spacer {
+      display: none;
+    }
+  }
+
+  nav {
+    ul {
+      display: flex;
+      flex-direction: row;
+      gap: 1em;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+/* Main content container. Appears right after header. */
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+/*
+Adoption Page
+--------------------------------------------------------------------------------
+ */
+
 .adopt-page {
 
-  #adoption-form {
+  /* Selection Form: allows users to pick which Selection method they want to
+     use to adopt a patch. */
+  #selection-form {
+    max-width: 600px;
+    margin: 1em auto;
+    padding: 1em;
 
-    .status {
-      display: block;
-      margin: 1em 0;
+    border: 2px solid var(--col-theme-1);
+    border-radius: 1em;
+
+    /* Lists Selection methods. Kinda like a series of Tabs. */
+    > ul {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        margin: 0;
+        padding: 0;
+      }
+
+      button {
+        height: 120px;
+      }
     }
 
+    /* Once a Selection method is chosen, the rest of the process is shown in a
+       panel. */
+    .panel {
+      display: none;
+    }
+  }
+
+  /* Adoption Form: final step for the adoption process. Displays the RA and dec
+     coordinates (determined from the Selection process) and a final
+     confirmation button. */
+  #adoption-form {
+    display: none;
+    max-width: 600px;
+    margin: 1em auto;
+    padding: 1em;
+
+    border: 2px solid var(--col-theme-1);
+    border-radius: 1em;
+
     .input {
-      display: flex;
-      gap: 1em;
-      margin: 1em 0;
+      margin: 1em auto;
+      max-width: 400px;
+      width: 100%;
 
       label {
-        flex: 0 0 50%;
+        display: block;
+        font-weight: bold;
       }
 
-      label {
-        flex: 0 0 auto;
-      }
+      .input-container {
+        display: flex;
+        flex-direction: row;
+        padding: 0.5em;
+        width: 100%;
 
-      input {
-        flex: 1 1 auto;
+        background: var(--col-accent-2);
+        border-radius: 0.5em;
+
+        input {
+          flex: 1 1 auto;
+
+          background: none;
+          border: none;
+          color: var(--col-dark-1);
+          font-size: 1.5em;
+          text-align: right;
+        }
+
+        span {
+          flex: 0 0 auto;
+          padding-right: 2em;
+        }
       }
+    }
+
+    [type=submit] {
+      display: block;
+      margin: 1em auto;
+      max-width: 400px;
+      width: 100%;
+
+      font-size: 1.5em;
     }
 
   }
 }
 
+/*
+Sky (Viewing) Page
+--------------------------------------------------------------------------------
+ */
+
 .sky-page {
 
+  /* Sky Map: it's a map of the sky, powered by Aladain Lite. */
+  #sky-map {
+    height: 500px;
+    margin: 0 auto;
+    max-width: 500px;
+    width: 100%;
+  }
+
+  /* Sky Controls: allows users to fine-tune the range of sky data they want to
+     see. */
   #sky-controls {
     padding: 0.5em 1em;
     margin: 0.5em 0;
@@ -174,6 +335,8 @@ button, .button {
     }
   }
 
+  /* Sky Data List: displays all events/objects observed in a patch of sky.
+   */
   #sky-data {
     display: flex;
     flex-direction: row;
@@ -192,22 +355,10 @@ button, .button {
       margin: 0;
     }
   }
-
-  .data-status {
-    padding: 0.5em 1em;
-    margin: 0.5em 0;
-
-    border-radius: 0.5em;
-    background: var(--col-accent-1);
-    color: var(--col-light-1);
-    text-align: center;
-
-    .status-error {
-      color: var(--col-error);
-    }
-  }
 }
 
+/* Datacard: individual events/objects observed in a patch of sky are presented
+   as "trading cards" called datacards. */
 .datacard {
   display: flex;
   flex-direction: column;
