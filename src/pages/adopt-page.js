@@ -5,7 +5,7 @@ Allows a user to adopt a patch of sky.
 - Otherwise, directs users to login, or to the Sky Page.
  */
 
-import { $, $all } from '../util/html.js'
+import { $, $all, $create } from '../util/html.js'
 import constellationsJson from '../util/constellations.json'
 
 const constellations = constellationsJson.constellations
@@ -26,6 +26,8 @@ export default class AdoptPage {
     
     this.showSelectionPanel = this.showSelectionPanel.bind(this)
     $all('#selection-form ul li button').forEach(button => button.addEventListener('click', this.showSelectionPanel))
+
+    this.doSelectionConstellation = this.doSelectionConstellation.bind(this)
 
     this.doSelectionRandom = this.doSelectionRandom.bind(this)
     $('#selection-button-random').addEventListener('click', this.doSelectionRandom)
@@ -125,11 +127,23 @@ export default class AdoptPage {
 
   // Render the Selection Form's panel for Constellation Selection
   updateConstellationPanel () {
+    const htmlList = $('.panel[data-type=constellation]')
+    htmlList.innerHTML = ''
 
+    constellations.forEach(cons => {
+      const htmlItem = $create(`li#constellation-${cons.short_name}.constellation`, htmlList)
+      const htmlButton = $create('button', htmlItem)
+      htmlButton.innerText = cons.name
+      htmlButton.dataset.constellation = cons.short_name
+      htmlButton.addEventListener('click', this.doSelectionConstellation)
+    })
   }
 
-  doSelectionConstellation () {
-
+  doSelectionConstellation (event) {
+    const constellationId = event.currentTarget.dataset.constellation
+    const constellation = constellations.find(c => c.short_name === constellationId)
+    console.log('+++ constellation: ', constellation)
+    if (!constellation) { return }
   }
 
   /*
