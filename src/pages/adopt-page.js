@@ -139,11 +139,33 @@ export default class AdoptPage {
     })
   }
 
+  // Select a random coordinate around the centre of the constellation.
   doSelectionConstellation (event) {
     const constellationId = event.currentTarget.dataset.constellation
     const constellation = constellations.find(c => c.short_name === constellationId)
-    console.log('+++ constellation: ', constellation)
     if (!constellation) { return }
+
+    // Roll the dice! Let's find a coordinate around the constellation's centre.
+    // The distance is rather arbitrary, even if it means we'll occasionally
+    // wander into the space of a different constellation. 😬
+    const distance = Math.sqrt(constellation.solid_angle_square_degrees)
+    let randomRa = Math.random() * distance - distance / 2 + constellation.ra_mean
+    let randomDec = Math.random() * distance - distance / 2 + constellation.dec_mean
+
+    // Clean the values
+    if (randomDec > 90) {  // If dec goes beyond absolute North, go to the other side of the pole)
+      randomDec = 180 - randomDec
+      randomRa = randomRa + 180
+    } else if (randomDec < -90) {  // Ditto if dec goes beyond absolute South.
+      randomDec = -180 - randomDec
+      randomRa = randomRa + 180
+    }
+    randomRa = randomRa % 360  // Make sure RA is in the range of 0 to 360
+
+    // Pass the values to the Adoption Form.
+    $('input[name="ra"]').value = randomRa.toFixed(4)
+    $('input[name="dec"]').value = randomDec.toFixed(4)
+    this.showAdoptionForm()
   }
 
   /*
