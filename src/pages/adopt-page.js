@@ -160,7 +160,7 @@ export default class AdoptPage {
       randomDec = -180 - randomDec
       randomRa = randomRa + 180
     }
-    randomRa = randomRa % 360  // Make sure RA is in the range of 0 to 360
+    randomRa = (randomRa + 360) % 360  // Make sure RA is in the range of 0 to 360
 
     // Pass the values to the Adoption Form.
     $('input[name="ra"]').value = randomRa.toFixed(4)
