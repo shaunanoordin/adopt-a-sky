@@ -50,3 +50,51 @@ Aladin Lite:
 
 - Additional Features
   - Favourites system for bookmarking objects
+
+- Dark Sorcery: Constellations
+  - Converting a set of coordinates to a matching constellation is easy.
+  - Converting a constellation to a set of valid coordinates is more difficult, if we want to be accurate.
+  - This is because constellations occupy an irregular space in the sky.
+  - A good enough conversion is to use the "centre" of each constellation (using the mean of the North-most + South-most RA boundaries and the mean of East-most + West-most declination boundaries) and finding coordinates around there.
+  - Don't ask me about Serpens (which is a constellation in two parts)
+  - Don't ask me about constellations drifting over time.
+
+<details>
+<summary>Getting Constellations Data</summary>
+
+- Go to https://en.wikipedia.org/wiki/IAU_designated_constellations_by_solid_angle 
+- This is the best source I've found so far with a list of all 88 constellations plus their mean RA & mean dec, since a lot of the older IAU webpages that hold the original data are gone.
+- In the dev console, add an ID to the constellations table.
+- Run the magical incantation below:
+
+```
+Array.from(document.querySelectorAll('#add-an-id-to-the-constellations-table tr')).map(tr => {
+    cols = Array.from(tr.children).map(td => td.innerText)
+
+    ra = cols[6].split(' ')
+    raHours = parseInt(ra[0])
+    raMins = parseFloat(ra[1])
+    ra_mean = raHours * 360 / 24 + raMins / 60
+
+    dec = cols[7].split(' ')
+    decDegs = parseInt(dec[0].replace('−', '-'))
+    decMins = parseFloat(dec[1]) * Math.sign(decDegs)
+    dec_mean = decDegs + decMins / 60
+
+    return {
+        name: cols[2],
+        short_name: cols[1],
+        ra_mean,
+        dec_mean,
+        solid_angle_square_degrees: parseFloat(cols[3]),
+        solid_angle_stredians: parseFloat(cols[4]) / 1000,
+        coverage: cols[5],
+        rank_by_coverage: parseInt(cols[0]),
+    }
+}).sort((a, b) => a.name.localeCompare(b.name))
+```
+
+- Convert this to a JSON file.
+- There's probably an easier way to get this data, but the dark pact I made with the Elder Gods of JavaScript demand that I take the most maddening route possible. Iä! Iä! Node.js fhtagn!
+
+</details>

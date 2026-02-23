@@ -5,9 +5,18 @@ Allows a user to adopt a patch of sky.
 - Otherwise, directs users to login, or to the Sky Page.
  */
 
-import { $, $all } from '../util/html.js'
+import { $, $all, $create } from '../util/html.js'
+import constellationsJson from '../util/constellations.json'
+
+const constellations = constellationsJson.constellations
 
 export default class AdoptPage {
+
+  /*
+  General Functions
+  ------------------------------------------------------------------------------
+   */
+
   constructor (app) {
     this.app = app
     this.adoptDataStatus = 'ready'
@@ -15,8 +24,10 @@ export default class AdoptPage {
     // Bind functions and event handlers: Selection form
     $('#selection-form').addEventListener('submit', this.doNothing)
     
-    this.doPanelSelect = this.doPanelSelect.bind(this)
-    $all('#selection-form ul li button').forEach(button => button.addEventListener('click', this.doPanelSelect))
+    this.showSelectionPanel = this.showSelectionPanel.bind(this)
+    $all('#selection-form ul li button').forEach(button => button.addEventListener('click', this.showSelectionPanel))
+
+    this.doSelectionConstellation = this.doSelectionConstellation.bind(this)
 
     this.doSelectionRandom = this.doSelectionRandom.bind(this)
     $('#selection-button-random').addEventListener('click', this.doSelectionRandom)
@@ -66,49 +77,109 @@ export default class AdoptPage {
     // so there's little follow up action required here.
   }
 
-  // Sets the status of the data get/post/whatever action AND updates the HTML
-  // elements displaying said status accordingly.
-  // - Triggered only by the doAdoption() action.
-  // - The Adopt Page's .data-status element has '.conditional' by default, so
-  //   it's hidden until the "adopt" action is triggered. 
-  updateDataStatus (status = '', message = '', args = {}) {
-    const htmlDataStatus = $('#adoption-data-status')
-    const htmlSubmitButton = $('#adoption-form button[type=submit]')
+  // Stop the event from doing anything.
+  doNothing (event) {
+    event.preventDefault()
+  }
 
-    htmlDataStatus.innerText = ''
-    htmlDataStatus.className = 'data-status'
+  /*
+  Selection Form
+  ------------------------------------------------------------------------------
+   */
 
-    this.adoptDataStatus = status
+  // Open one of the Selection Form's panels.
+  showSelectionPanel (event) {
+    const selectionType = event.currentTarget.dataset.type
 
-    switch (status) {
-      case 'posting':
-        htmlDataStatus.innerText = 'Adopting...'
-        htmlDataStatus.className = 'data-status status-posting'
-        htmlSubmitButton.disabled = true
-        break
-      case 'success':
-        htmlDataStatus.innerText = 'Adoption complete!'
-        htmlDataStatus.className = 'data-status status-success'
-        htmlSubmitButton.disabled = true
-        break
-      case 'no-op':
-        htmlDataStatus.innerText = 'You\'ve already adopted a patch of sky.'
-        htmlDataStatus.className = 'data-status status-no-op'
-        htmlSubmitButton.disabled = true
-        break
-      case 'error':
-        htmlDataStatus.innerText = `ERROR: ${message}`
-        htmlDataStatus.className = 'data-status status-error'
-        htmlSubmitButton.disabled = false
-        break
+    // Hide all panels except for the selected one.
+    $all('#selection-form .panel').forEach(panel => panel.style.display = 'none')
+    $(`#selection-form .panel[data-type=${selectionType}]`).style.display = 'block'
+
+    switch (selectionType) {
+      case 'constellation':
+        this.updateConstellationPanel()
+        break;
     }
   }
 
+  /*
+  Selection Form - "Random" Selection Method
+  ------------------------------------------------------------------------------
+   */
+
+  // Select a random RA and dec, and then pass it to the Adoption Form.
+  doSelectionRandom (event) {
+
+    // Roll the dice!
+    const randomRa = (Math.random() * 360).toFixed(4)  // Valid RA ranger: 0º to 360º
+    const randomDec = (Math.random() * 180 - 90).toFixed(4)  // Valid dec range: -90º South to +90º North
+
+    // Pass the values to the Adoption Form.
+    $('input[name="ra"]').value = randomRa
+    $('input[name="dec"]').value = randomDec 
+    this.showAdoptionForm()
+  }
+
+  /*
+  Selection Form - "Constellation" Selection Method
+  ------------------------------------------------------------------------------
+   */
+
+  // Render the Selection Form's panel for Constellation Selection
+  updateConstellationPanel () {
+    const htmlList = $('.panel[data-type=constellation] ul')
+    htmlList.innerHTML = ''
+
+    constellations.forEach(cons => {
+      const htmlItem = $create(`li#constellation-${cons.short_name}.constellation`, htmlList)
+      const htmlButton = $create('button', htmlItem)
+      htmlButton.innerText = cons.name
+      htmlButton.dataset.constellation = cons.short_name
+      htmlButton.addEventListener('click', this.doSelectionConstellation)
+    })
+  }
+
+  // Select a random coordinate around the centre of the constellation.
+  doSelectionConstellation (event) {
+    const constellationId = event.currentTarget.dataset.constellation
+    const constellation = constellations.find(c => c.short_name === constellationId)
+    if (!constellation) { return }
+
+    // Roll the dice! Let's find a coordinate around the constellation's centre.
+    // The distance is rather arbitrary, even if it means we'll occasionally
+    // wander into the space of a different constellation. 😬
+    const distance = Math.sqrt(constellation.solid_angle_square_degrees)
+    let randomRa = Math.random() * distance - distance / 2 + constellation.ra_mean
+    let randomDec = Math.random() * distance - distance / 2 + constellation.dec_mean
+
+    // Clean the values
+    if (randomDec > 90) {  // If dec goes beyond absolute North, go to the other side of the pole)
+      randomDec = 180 - randomDec
+      randomRa = randomRa + 180
+    } else if (randomDec < -90) {  // Ditto if dec goes beyond absolute South.
+      randomDec = -180 - randomDec
+      randomRa = randomRa + 180
+    }
+    randomRa = (randomRa + 360) % 360  // Make sure RA is in the range of 0 to 360
+
+    // Pass the values to the Adoption Form.
+    $('input[name="ra"]').value = randomRa.toFixed(4)
+    $('input[name="dec"]').value = randomDec.toFixed(4)
+    this.showAdoptionForm()
+  }
+
+  /*
+  Adoption Form
+  ------------------------------------------------------------------------------
+   */
+
+  // Show the Adoption Form and hide the Selection Form.
   showAdoptionForm () {
     $('#selection-form').style.display = 'none'
     $('#adoption-form').style.display = 'block'
   }
 
+  // Submit adoption details (RA, dec) to the API!
   async doAdoption (event) {
     event?.preventDefault()
 
@@ -151,27 +222,41 @@ export default class AdoptPage {
     }
   }
 
-  doNothing (event) {
-    event.preventDefault()
-  }
+  // Sets the status of the data get/post/whatever action AND updates the HTML
+  // elements displaying said status accordingly.
+  // - Triggered only by the doAdoption() action.
+  // - The Adopt Page's .data-status element has '.conditional' by default, so
+  //   it's hidden until the "adopt" action is triggered. 
+  updateDataStatus (status = '', message = '', args = {}) {
+    const htmlDataStatus = $('#adoption-data-status')
+    const htmlSubmitButton = $('#adoption-form button[type=submit]')
 
-  doSelectionRandom (event) {
+    htmlDataStatus.innerText = ''
+    htmlDataStatus.className = 'data-status'
 
-    // Roll the dice!
-    const randomRa = (Math.random() * 360).toFixed(4)  // Valid RA ranger: 0º to 360º
-    const randomDec = (Math.random() * 180 - 90).toFixed(4)  // Valid dec range: -90º South to +90º North
+    this.adoptDataStatus = status
 
-    $('input[name="ra"]').value = randomRa
-    $('input[name="dec"]').value = randomDec 
-
-    this.showAdoptionForm()
-  }
-
-  doPanelSelect (event) {
-    const selectionType = event.currentTarget.dataset.type
-
-    // Hide all panels except for the selected one.
-    $all('#selection-form .panel').forEach(panel => panel.style.display = 'none')
-    $(`#selection-form .panel[data-type=${selectionType}]`).style.display = 'block'
+    switch (status) {
+      case 'posting':
+        htmlDataStatus.innerText = 'Adopting...'
+        htmlDataStatus.className = 'data-status status-posting'
+        htmlSubmitButton.disabled = true
+        break
+      case 'success':
+        htmlDataStatus.innerText = 'Adoption complete!'
+        htmlDataStatus.className = 'data-status status-success'
+        htmlSubmitButton.disabled = true
+        break
+      case 'no-op':
+        htmlDataStatus.innerText = 'You\'ve already adopted a patch of sky.'
+        htmlDataStatus.className = 'data-status status-no-op'
+        htmlSubmitButton.disabled = true
+        break
+      case 'error':
+        htmlDataStatus.innerText = `ERROR: ${message}`
+        htmlDataStatus.className = 'data-status status-error'
+        htmlSubmitButton.disabled = false
+        break
+    }
   }
 }
