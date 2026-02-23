@@ -215,6 +215,7 @@ Adoption Page
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
+      gap: 0.5em;
       list-style: none;
       margin: 0;
       padding: 0;
@@ -233,6 +234,18 @@ Adoption Page
        panel. */
     .panel {
       display: none;
+    }
+
+    .panel {
+      margin: 1em 0;
+    }
+
+    .panel[data-type=constellation] ul {
+      list-style: none;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1em;
     }
   }
 

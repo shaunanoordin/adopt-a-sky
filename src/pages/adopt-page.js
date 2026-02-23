@@ -127,7 +127,7 @@ export default class AdoptPage {
 
   // Render the Selection Form's panel for Constellation Selection
   updateConstellationPanel () {
-    const htmlList = $('.panel[data-type=constellation]')
+    const htmlList = $('.panel[data-type=constellation] ul')
     htmlList.innerHTML = ''
 
     constellations.forEach(cons => {
