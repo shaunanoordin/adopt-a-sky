@@ -1,6 +1,8 @@
 import { config } from '../config.js'
 
 export default async function api_skydata (clientRequest, serverResponse) {
+  let debug = ''
+
   try {
     // Get user input.
     let ra = parseFloat(clientRequest.query.ra)
@@ -25,10 +27,23 @@ export default async function api_skydata (clientRequest, serverResponse) {
     const raMax = ra + radiusInDegrees  // WARNING: this doesn't account when ra is close to 0º, or to 360º, but ah well, we're not trying to be too precise.
     const decMin = dec - radiusInDegrees
     const decMax = dec + radiusInDegrees
-    const querySelect = encodeURIComponent(`objects.objectId,objects.ramean, objects.decmean,objects.gmag, objects.rmag,jdnow() - objects.jdmax as 'days_ago',sherlock_classifications.classification as 'sherlock',sherlock_classifications.z,sherlock_classifications.photoZ,sherlock_classifications.catalogue_object_id,sherlock_classifications.description`)
-    const queryTables = encodeURIComponent(`objects,sherlock_classifications`)
-    const queryWhere = encodeURIComponent(`objects.ncand  >= ${minimumLightCurveDetection} AND jdnow() -jdmax BETWEEN ${minDaysAgo} AND ${maxDaysAgo} AND ramean BETWEEN ${raMin} AND ${raMax} AND decmean BETWEEN ${decMin} AND ${decMax}`)
+    let querySelect = ''
+    let queryTables = ''
+    let queryWhere = ''
     const queryLimit = config.maxResultsPerQuery
+
+    if (config.lasairApiSchema === 'ztf') {
+      querySelect = encodeURIComponent(`objects.objectId,objects.ramean AS 'ra', objects.decmean AS 'dec',objects.gmag, objects.rmag,jdnow() - objects.jdmax AS 'days_ago',sherlock_classifications.classification AS 'sherlock',sherlock_classifications.z,sherlock_classifications.photoZ,sherlock_classifications.catalogue_object_id,sherlock_classifications.description`)
+      queryTables = encodeURIComponent(`objects,sherlock_classifications`)
+      queryWhere = encodeURIComponent(`objects.ncand >= ${minimumLightCurveDetection} AND jdnow() -jdmax BETWEEN ${minDaysAgo} AND ${maxDaysAgo} AND ramean BETWEEN ${raMin} AND ${raMax} AND decmean BETWEEN ${decMin} AND ${decMax}`)
+
+    } else if (config.lasairApiSchema === 'lsst') {
+      querySelect = encodeURIComponent('')
+      queryTables = encodeURIComponent('')
+      queryWhere = encodeURIComponent('')
+    }
+
+    debug = `${config.lasairApiUrl}query/?selected=${querySelect}&tables=${queryTables}&conditions=${queryWhere}&limit=${queryLimit}&token=${config.lasairApiKey}&format=json`
 
     // Fetch data from Lasair's "Query" API.
     const lasairResponse = await fetch(`${config.lasairApiUrl}query/?selected=${querySelect}&tables=${queryTables}&conditions=${queryWhere}&limit=${queryLimit}&token=${config.lasairApiKey}&format=json`)
@@ -49,7 +64,8 @@ export default async function api_skydata (clientRequest, serverResponse) {
     serverResponse
     .status(500)
     .json({
-      error: errMessage
+      error: errMessage,
+      debug
     })
   }
 }

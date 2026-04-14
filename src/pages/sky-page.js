@@ -238,7 +238,7 @@ export default class SkyPage {
         // We need to purify the HTML here.
         const htmlBody = $create('div.datacard-body', htmlLI)
         htmlBody.innerHTML = `
-          <p>This was found <b>${item.days_ago.toFixed(0)} days ago</b> at coordinates <b>RA=${item.ramean.toFixed(4)}</b> and <b>dec=${item.decmean.toFixed(4)}</b></p>
+          <p>This was found <b>${item.days_ago.toFixed(0)} days ago</b> at coordinates <b>RA=${item.ra.toFixed(4)}</b> and <b>dec=${item.dec.toFixed(4)}</b></p>
           <p>${item.description}</p>
         `
       })
