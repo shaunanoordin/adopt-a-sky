@@ -8,6 +8,7 @@ Displays the sky map and shows what's happening in the adopted patch of sky.
 import Aladin from 'aladin-lite'
 import { $, $create } from '../util/html.js'
 import { SHERLOCK_TYPES } from '../util/sherlockTypes.js'
+import getModifiedJulianDate from '../util/getModifiedJulianDate.js'
 
 const MAX_RESULTS_PER_QUERY = 10
 
@@ -234,11 +235,16 @@ export default class SkyPage {
         const htmlType = $create('div.datacard-type', htmlLI)
         htmlType.innerText = SHERLOCK_TYPES[item.sherlock] ? `${item.sherlock} - ${SHERLOCK_TYPES[item.sherlock]}` : SHERLOCK_TYPES['']
 
+        const mjdNow = getModifiedJulianDate()
+        const daysAgo = Number.isFinite(item.most_recent_mjdate)
+          ? mjdNow - parseFloat(item.most_recent_mjdate)
+          : item.days_ago 
+
         // ❗️ WARNING: DANGER ZONE
         // We need to purify the HTML here.
         const htmlBody = $create('div.datacard-body', htmlLI)
         htmlBody.innerHTML = `
-          <p>This was found <b>${item.days_ago?.toFixed(0)} days ago</b> at coordinates <b>RA=${item.ra?.toFixed(4)}</b> and <b>dec=${item.dec?.toFixed(4)}</b></p>
+          <p>This was found <b>${daysAgo?.toFixed(0)} days ago</b> at coordinates <b>RA=${item.ra?.toFixed(4)}</b> and <b>dec=${item.dec?.toFixed(4)}</b></p>
           <p>${item.description}</p>
         `
       })
