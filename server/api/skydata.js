@@ -1,8 +1,6 @@
 import { config } from '../config.js'
 
 export default async function api_skydata (clientRequest, serverResponse) {
-  let debug = ''
-
   try {
     // Get user input.
     let ra = parseFloat(clientRequest.query.ra)
@@ -38,12 +36,15 @@ export default async function api_skydata (clientRequest, serverResponse) {
       queryWhere = encodeURIComponent(`objects.ncand >= ${minimumLightCurveDetection} AND jdnow() -jdmax BETWEEN ${minDaysAgo} AND ${maxDaysAgo} AND ramean BETWEEN ${raMin} AND ${raMax} AND decmean BETWEEN ${decMin} AND ${decMax}`)
 
     } else if (config.lasairApiSchema === 'lsst') {
-      querySelect = encodeURIComponent('')
-      queryTables = encodeURIComponent('')
-      queryWhere = encodeURIComponent('')
-    }
+      // ❗️ LSST does NOT allow jdnow() function to be called. Hence, we need to craft our own before/until times.
+      const mjdNow = toModifiedJulianDate()
+      const mjdMax = mjdNow - maxDaysAgo
+      const mjdMin = mjdNow - minDaysAgo
 
-    debug = `${config.lasairApiUrl}query/?selected=${querySelect}&tables=${queryTables}&conditions=${queryWhere}&limit=${queryLimit}&token=${config.lasairApiKey}&format=json`
+      querySelect = encodeURIComponent(`objects.diaObjectId as objectId, objects.ra, objects.decl AS 'dec', objects.lastDiaSourceMjdTai AS 'most_recent_mjdate', sherlock_classifications.classification AS 'sherlock', sherlock_classifications.description`)
+      queryTables = encodeURIComponent('objects,sherlock_classifications')
+      queryWhere = encodeURIComponent(`lastDiaSourceMjdTai BETWEEN ${mjdMax} AND ${mjdMin} AND ra BETWEEN ${raMin} AND ${raMax} AND decl BETWEEN ${decMin} AND ${decMax}`)
+    }
 
     // Fetch data from Lasair's "Query" API.
     const lasairResponse = await fetch(`${config.lasairApiUrl}query/?selected=${querySelect}&tables=${queryTables}&conditions=${queryWhere}&limit=${queryLimit}&token=${config.lasairApiKey}&format=json`)
@@ -55,7 +56,7 @@ export default async function api_skydata (clientRequest, serverResponse) {
     .status(200)
     .json({
       status: 'ok',
-      data
+      data,
     })
 
   } catch (err) {
@@ -65,7 +66,23 @@ export default async function api_skydata (clientRequest, serverResponse) {
     .status(500)
     .json({
       error: errMessage,
-      debug
     })
   }
+}
+
+function toModifiedJulianDate (date = new Date()) {
+  // Get time since Unix epoch (1 January 1970 00:00:00 UTC)
+  const millisecondsSinceEpoch = date.getTime()
+  const daysSinceEpoch = millisecondsSinceEpoch / (1000 * 60 * 60 * 24)
+  
+  // Unix epoch is Julian Date 2440587.5
+  // Modified Julian Date is a flat modifier to Julian Date.
+  const julianDate = daysSinceEpoch + 2440587.5  
+  const modifiedJulianDate = julianDate - 2400000.5
+  
+  return modifiedJulianDate
+}
+
+function fromModifiedJulianDate (modifiedJulianDate = 40587) {  // 40587 is the MJD of the Unix Epoch, 1 Jan 1970
+  
 }
