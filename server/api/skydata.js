@@ -1,4 +1,5 @@
 import { config } from '../config.js'
+import getModifiedJulianDate from '../../src/util/getModifiedJulianDate.js'
 
 export default async function api_skydata (clientRequest, serverResponse) {
   try {
@@ -37,7 +38,7 @@ export default async function api_skydata (clientRequest, serverResponse) {
 
     } else if (config.lasairApiSchema === 'lsst') {
       // ❗️ LSST does NOT allow jdnow() function to be called. Hence, we need to craft our own before/until times.
-      const mjdNow = toModifiedJulianDate()
+      const mjdNow = getModifiedJulianDate()
       const mjdMax = mjdNow - maxDaysAgo
       const mjdMin = mjdNow - minDaysAgo
 
@@ -68,21 +69,4 @@ export default async function api_skydata (clientRequest, serverResponse) {
       error: errMessage,
     })
   }
-}
-
-function toModifiedJulianDate (date = new Date()) {
-  // Get time since Unix epoch (1 January 1970 00:00:00 UTC)
-  const millisecondsSinceEpoch = date.getTime()
-  const daysSinceEpoch = millisecondsSinceEpoch / (1000 * 60 * 60 * 24)
-  
-  // Unix epoch is Julian Date 2440587.5
-  // Modified Julian Date is a flat modifier to Julian Date.
-  const julianDate = daysSinceEpoch + 2440587.5  
-  const modifiedJulianDate = julianDate - 2400000.5
-  
-  return modifiedJulianDate
-}
-
-function fromModifiedJulianDate (modifiedJulianDate = 40587) {  // 40587 is the MJD of the Unix Epoch, 1 Jan 1970
-  
 }
