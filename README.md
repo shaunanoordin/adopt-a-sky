@@ -38,6 +38,10 @@ Aladin Lite:
 
 ## Dev Notes & TODO
 
+- Visuals
+  - Add visuals for Event/Object Cards
+  - Update visuals theme to match Rubin
+
 - Selecting a patch of sky
   - Revisit Astrology idea
   - re: selecting by type of observation - galactic plane is dusty so no supernovas can be observed here?

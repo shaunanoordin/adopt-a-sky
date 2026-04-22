@@ -8,6 +8,7 @@ export const config = {
   port: process.env.PORT || 3666,
   lasairApiKey: process.env.LASAIR_API_KEY || '',
   lasairApiUrl: process.env.LASAIR_API_URL || 'https://lasair-ztf.lsst.ac.uk/api/',
+  lasairApiSchema: process.env.LASAIR_API_SCHEMA || 'ztf',  // Either 'ztf' or 'lsst'
   databaseHost: process.env.DATABASE_HOST || 'localhost',
   databaseDbname: process.env.DATABASE_DBNAME || '',
   databaseUsername: process.env.DATABASE_USERNAME || '',
